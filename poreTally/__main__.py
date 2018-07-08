@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 import argparse
 import sys
-sys.path.append('')
+import os
+sys.path.append(os.path.dirname(__file__))
 
 import argparse_dicts
-
 import run_assemblies
 import run_analysis
 import run_benchmark
