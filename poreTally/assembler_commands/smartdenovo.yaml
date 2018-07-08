@@ -1,0 +1,15 @@
+versions:
+  smartdenovo: 'echo "1.0.0"'
+description: >
+  SMARTdenovo is a long read OLC assembly pipeline that was originally intended to
+  work with PacBio reads, but has been shown to produce assemblies of reasonably
+  high continuity from MinION reads as well.
+commands: |
+  smartdenovo.pl -p smartdenovo_assembly {{input.fastq}} > smartdenovo_assembly.mak
+  make -f smartdenovo_assembly.mak
+  if [ -e smartdenovo_assembly.cns ]; then mv smartdenovo_assembly.cns {{output}}; elif [ -e smartdenovo_assembly.dmo.lay.utg ]; then mv smartdenovo_assembly.dmo.lay.utg {{output}}; fi
+conda:
+  channels:
+    - bioconda
+  dependencies:
+    - smartdenovo

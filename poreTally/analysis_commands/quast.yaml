@@ -1,0 +1,9 @@
+versions:
+  Quast: 'quast.py --version |  grep -Po "(?<=QUAST v).+"'
+commands:
+  quast.py {quast_assemblies} --threads {{threads}} -o . -R {{input.ref_fasta}} --min-identity 90.0 --no-html --no-icarus --no-gc --no-sv --silent {quast_options}
+conda:
+  channels:
+  - bioconda
+  dependencies:
+  - quast

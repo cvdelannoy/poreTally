@@ -1,0 +1,159 @@
+import mappy as mp
+import yaml
+from shutil import copyfile
+import os
+
+ASSEMBLERS='{assemblies_string}'.split()
+QUAST_EXTS='fplot rplot'.split()
+    
+rule:
+    input:
+        '{wd_analysis_summary}README.md'
+
+rule jellyfish:
+	conda:
+		'{wd_analysis_condas}jellyfish.yaml'
+	output:
+		'{wd_analysis_summary}jellyfish/{{assembler}}.count'
+	threads:
+		{threads}
+	input:
+		expand('{wd_assemblies}{{assembler}}.fasta', assembler=ASSEMBLERS)
+	shell:
+		'''
+		echo "Jellyfish: "$(jellyfish --version | grep -Po "(?<=jellyfish ).+") >> {wd_analysis_summary}/analysis_tool_versions.yaml
+		cd {wd_analysis}jellyfish/
+		jellyfish count -m 5 -s 100M -t {{threads}} -C {{input}} -o tmp.jf
+		jellyfish dump -c tmp.jf > {{output}}
+		'''
+
+rule jellyfish_reference:
+	conda:
+		'{wd_analysis_condas}jellyfish.yaml'
+	output:
+		'{wd_analysis_summary}jellyfish/reference.count'
+	threads:
+		{threads}
+	input:
+		'{ref_fasta}'
+	shell:
+		'''
+		echo "Jellyfish: "$(jellyfish --version | grep -Po "(?<=jellyfish ).+") >> {wd_analysis_summary}/analysis_tool_versions.yaml
+		cd {wd_analysis}jellyfish/
+		jellyfish count -m 5 -s 100M -t {{threads}} -C {{input}} -o tmp.jf
+		jellyfish dump -c tmp.jf > {{output}}
+		'''
+
+rule quast:
+	output:
+	    report='{wd_analysis_summary}quast/report.tsv'{quast_output}
+	threads:
+		{threads}
+	input:
+	    expand('{wd_assemblies}{{assembler}}.fasta', assembler=ASSEMBLERS)
+	shell:
+		'''
+		echo "Quast: "$(quast.py --version |  grep -Po "(?<=QUAST v).+")  >> {wd_analysis_summary}/analysis_tool_versions.yaml
+		cd {wd_analysis}quast/
+		quast.py {{input}} --threads {{threads}} -o . -R {ref_fasta} --min-identity 90.0 --no-html --no-icarus --no-gc --no-sv --silent {quast_options}
+		cp report.tsv {wd_analysis_summary}quast/report.tsv
+		{quast_output_cmd}
+		'''
+
+rule nanoplot:
+    conda:
+        '{wd_analysis_condas}nanoplot.yaml'
+    output:
+        '{wd_analysis_summary}readset_analysis/nanostats.txt'
+    threads:
+        {threads}
+    input:
+        reads='{reads_fastq}'
+    shell:
+        '''
+        echo "Nanoplot: "$(NanoPlot --version | grep -Po "(?<=NanoPlot ).+")  >> {wd_analysis_summary}/analysis_tool_versions.yaml
+        cd {wd_analysis}readset_analysis/
+        NanoPlot -t {{threads}} -o . --fastq {{input.reads}}
+        cp NanoStats.txt {{output}}
+        '''
+
+rule readset_quality:
+    output:
+        '{wd_analysis_summary}readset_analysis/alignment_stats.yaml'
+    threads:
+        {threads}
+    input:
+        reads='{reads_fastq}',
+        ref_fasta='{ref_fasta}'
+    run:
+        os.system('echo "Mappy: "$(conda list | grep -oP "(?<=mappy).+" | grep -oP "[0-9]+(\.[0-9]+)+") >> {wd_analysis_summary}/analysis_tool_versions.yaml')
+        result_dict = {{
+            'nb_mappings': [],
+            'matches': 0,
+            'mismatches': 0,
+            'deletions': 0,
+            'insertions': 0,
+            'mapping_quality': []}}
+        aligner = mp.Aligner(input.ref_fasta)
+        for name, seq, qual in mp.fastx_read(input.reads):
+            nb_hits = 0
+            for hit in aligner.map(seq):
+                if hit.is_primary:
+                    matches_mismatches = sum([c[0] for c in hit.cigar if c[1] == 0])
+                    result_dict['matches'] += hit.mlen
+                    result_dict['mismatches'] += matches_mismatches - hit.mlen
+                    result_dict['insertions'] += sum([c[0] for c in hit.cigar if c[1] == 1])
+                    result_dict['deletions'] += sum([c[0] for c in hit.cigar if c[1] == 2])
+                    result_dict['mapping_quality'].append(hit.mapq)
+                nb_hits += 1
+            result_dict['nb_mappings'].append(nb_hits)
+        with open(output[0], 'w') as outfile:
+            yaml.dump(result_dict, outfile)
+
+rule copy_files:
+    input:
+        expand('{wd_assembler_results}log_files/{{assembler}}.log', assembler=ASSEMBLERS),
+        expand('{wd_assembler_results}cpu_files/{{assembler}}.bm', assembler=ASSEMBLERS),
+        expand('{wd_assembler_results}command_files/{{assembler}}.cmd', assembler=ASSEMBLERS)
+    output:
+        log='{wd_analysis_summary}log_files/{{assembler}}.log',
+        cpu='{wd_analysis_summary}cpu_files/{{assembler}}.bm',
+        cmd='{wd_analysis_summary}command_files/{{assembler}}.cmd'
+    shell:
+        '''
+        cp {wd_assembler_results}log_files/{{wildcards.assembler}}.log {{output.log}}
+        cp {wd_assembler_results}cpu_files/{{wildcards.assembler}}.bm {{output.cpu}}
+        cp {wd_assembler_results}command_files/{{wildcards.assembler}}.cmd {{output.cmd}}
+        '''
+
+rule multiqc:
+    input:
+        expand('{wd_analysis_summary}quast/{{assembler}}.{{ext}}', assembler=ASSEMBLERS, ext=QUAST_EXTS),
+        expand('{wd_analysis_summary}jellyfish/{{assembler}}.count', assembler=ASSEMBLERS),
+        '{wd_analysis_summary}jellyfish/reference.count',
+        '{wd_analysis_summary}quast/report.tsv',
+        '{wd_analysis_summary}readset_analysis/nanostats.txt',
+        '{wd_analysis_summary}readset_analysis/alignment_stats.yaml',
+        expand('{wd_analysis_summary}log_files/{{assembler}}.log', assembler=ASSEMBLERS),
+        expand('{wd_analysis_summary}cpu_files/{{assembler}}.bm', assembler=ASSEMBLERS),
+        expand('{wd_assembler_results}command_files/{{assembler}}.cmd', assembler=ASSEMBLERS)
+    output:
+        '{wd_analysis_summary}REPORT.html'
+    threads:
+        {threads}
+    shell:
+        '''
+        cd {wd_analysis_summary}
+        multiqc -i 'Assembler Benchmark report' --filename REPORT -o . -f -p \
+        --tag assembler_benchmark --template assembler_benchmark {wd_analysis_summary} \
+        --data-format yaml
+        cp multiqc_report/REPORT.html {{output}}
+        '''
+
+rule md_report:
+    input:
+        '{wd_analysis_summary}REPORT.html'
+    output:
+        '{wd_analysis_summary}README.md'
+    script:
+        '{__location__}/create_markdown_file.py'
