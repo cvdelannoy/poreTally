@@ -7,6 +7,7 @@ def readme():
 setup(
     name='poreTally',
     version='0.1',
+    packages=['poreTally'],
     install_requires=['conda', 'snakemake', 'pyYAML', 'mappy', 'biopython', 'ete3', 'tabulate', 'psutil', 'requests'],
     author='Carlos de Lannoy',
     author_email='carlos.delannoy@wur.nl',
