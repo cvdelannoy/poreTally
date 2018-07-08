@@ -1,0 +1,7 @@
+channels:
+- bioconda
+- anaconda
+dependencies:
+- perl
+- boost
+- quast=4.6.3
