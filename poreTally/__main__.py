@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 import argparse
 import sys
+sys.path.append('')
+
 import argparse_dicts
 
 import run_assemblies
