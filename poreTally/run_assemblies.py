@@ -43,8 +43,11 @@ def main(args):
     cmds_dict = dict()
     sf_dict = dict()
     for pipeline in args.pipelines:
-        yaml_fn = __location__ + '/assembler_commands/' + pipeline + '.yaml'
-        if os.path.exists(yaml_fn):
+        if os.path.isfile(pipeline):
+            yaml_fn = pipeline
+        else:
+            yaml_fn = __location__ + '/assembler_commands/' + pipeline + '.yaml'
+        if os.path.isfile(yaml_fn):
             with open(yaml_fn, 'r') as plf:
                 pl_dict = yaml.load(plf)
         else:

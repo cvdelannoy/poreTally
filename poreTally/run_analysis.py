@@ -58,7 +58,7 @@ def main(args):
 
     # --- Construct snakemake file ---
     sf_fn = args.working_dir + 'Snakefile_analysis_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-    with open(__location__+'/Snakemake_analysis', 'r') as f:
+    with open(__location__+'/poreTally/Snakemake_analysis', 'r') as f:
         sf = f.read()
 
     sf = sf.format(**options_dict)
