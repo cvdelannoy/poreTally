@@ -1,7 +1,8 @@
 channels:
 - bioconda
-- anaconda
+- BioBuilds
+- conda-forge
 dependencies:
-- perl
-- boost
+- perl=5.22.0
+- boost=1.64
 - quast=4.6.3
