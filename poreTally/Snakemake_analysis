@@ -128,7 +128,7 @@ rule copy_files:
 
 rule multiqc:
     input:
-        expand('{wd_analysis_summary}quast/{{assembler}}.{{ext}}', assembler=ASSEMBLERS, ext=QUAST_EXTS),
+        expand('{wd_analysis_summary}quast/{{assembler}}.coords', assembler=ASSEMBLERS),
         expand('{wd_analysis_summary}jellyfish/{{assembler}}.count', assembler=ASSEMBLERS),
         '{wd_analysis_summary}jellyfish/reference.count',
         '{wd_analysis_summary}quast/report.tsv',
