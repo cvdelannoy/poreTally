@@ -127,6 +127,8 @@ rule copy_files:
         '''
 
 rule multiqc:
+    conda:
+        '{wd_analysis_condas}multiqc.yaml'
     input:
         expand('{wd_analysis_summary}quast/{{assembler}}.coords', assembler=ASSEMBLERS),
         expand('{wd_analysis_summary}jellyfish/{{assembler}}.count', assembler=ASSEMBLERS),
