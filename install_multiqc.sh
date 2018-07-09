@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-pip install --user git+https://github.com/cvdelannoy/MultiQC.git
+pip install --user --upgrade git+https://github.com/cvdelannoy/MultiQC.git
