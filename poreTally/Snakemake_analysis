@@ -45,6 +45,8 @@ rule jellyfish_reference:
 		'''
 
 rule quast:
+    conda:
+        '{wd_analysis_condas}quast.yaml'
 	output:
 	    report='{wd_analysis_summary}quast/report.tsv'{quast_output}
 	threads:
