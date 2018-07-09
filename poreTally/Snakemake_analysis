@@ -143,6 +143,8 @@ rule multiqc:
         {threads}
     shell:
         '''
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
         cd {wd_analysis_summary}
         multiqc -i 'Assembler Benchmark report' --filename REPORT -o . -f -p \
         --tag assembler_benchmark --template assembler_benchmark {wd_analysis_summary} \
