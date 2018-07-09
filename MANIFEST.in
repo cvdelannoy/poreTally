@@ -1,0 +1,6 @@
+include poreTally/assembler_commands/*.yaml
+include poreTally/analysis_conda_files/*.yaml
+include poreTally/analysis_commands/*.yaml
+include poreTally/allowed_publication_info_names.yaml
+include poreTally/Snakemake_analysis
+include README.md
