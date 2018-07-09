@@ -23,5 +23,6 @@ setup(
             'poreTally = poreTally.__main__:main'
         ]
     },
+    scripts=['install_multiqc.sh'],
     include_package_data=True
 )
