@@ -48,7 +48,7 @@ def main(args):
     quast_output = ''
     quast_output_cmd = ''
     for anl in assemblies_names_list:
-        quast_output += (',\n\t\t{anl}_fplot=\'{wd_analysis_summary}quast/{anl}.coords\'').format(anl=anl,
+        quast_output += (',\n\t\t{anl}_coords=\'{wd_analysis_summary}quast/{anl}.coords\'').format(anl=anl,
                                                                                                  wd_analysis_summary=options_dict['wd_analysis_summary'])
         quast_output_cmd += 'cp contigs_reports/nucmer_output/{anl}.coords {{output.{anl}_coords}}\n'.format(anl=anl)
     options_dict['quast_output'] = quast_output
