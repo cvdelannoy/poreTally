@@ -9,7 +9,7 @@ setup(
     version='0.1',
     packages=['poreTally'],
     install_requires=['six', 'conda', 'gitpython', 'snakemake', 'pyYAML', 'mappy', 'biopython', 'ete3', 'tabulate',
-                      'psutil', 'requests', 'multiqc', 'NanoPlot'],
+                      'psutil', 'requests', 'NanoPlot'],
     dependency_links=['git+https://github.com/cvdelannoy/MultiQC.git@master#egg=multiqc-1.5'],
     author='Carlos de Lannoy',
     author_email='carlos.delannoy@wur.nl',
