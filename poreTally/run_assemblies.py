@@ -36,6 +36,9 @@ def main(args):
     param_dict['SEQUENCED_SIZE'] = hp.get_nb_bases(all_reads_fastq, 'fastq')
     param_dict['COVERAGE'] = param_dict['SEQUENCED_SIZE'] / param_dict['REFGENOME_SIZE']
     param_dict['WD'] = wd
+    if args.fast5_dir:
+        fast5_dir_abs = os.path.abspath(args.fast5_dir) + '/'
+        param_dict['FAST5_DIR'] = fast5_dir_abs
 
     # Construct Snakefile
     # construct unique name for snakefile first
@@ -54,7 +57,11 @@ def main(args):
             warnings.warn('Could not find yaml file for {pl}, skipping'.format(pl=yaml_fn))
             continue
 
-        wd_cur = hp.parse_output_path(wd_results + pipeline)
+        wd_cur_path = wd_results + pipeline
+        if os.path.isdir(wd_cur_path):  # Ensure clean output folder, as some assemblers error out otherwise
+            shutil.rmtree(wd_cur_path)
+        wd_cur = hp.parse_output_path(wd_cur_path)
+
         sf_dict[pipeline] = {
             'input': {'fastq': wd+'all_reads.fastq'},
             'threads': [args.threads_per_job],
@@ -62,9 +69,7 @@ def main(args):
             'log': [wd_logs + pipeline + '.log'],
             'benchmark': [wd_cpu + pipeline + '.bm']
         }
-        if args.fast5_dir:
-            fast5_dir_abs = os.path.abspath(args.fast5_dir) + '/'
-            param_dict['FAST5_DIR'] = fast5_dir_abs
+
 
         conda = pl_dict.get('conda')
         if conda:

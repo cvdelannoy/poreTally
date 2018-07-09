@@ -21,7 +21,7 @@ def main(args):
     options_dict['ref_fasta'] = os.path.realpath(args.ref_fasta)
     options_dict['reads_fastq'] = args.working_dir + 'all_reads.fastq'
     options_dict['wd_analysis'] = hp.parse_output_path(args.working_dir + 'analysis/')
-    options_dict['wd_analysis_condas'] = __location__ + '/poreTally/analysis_conda_files/'
+    options_dict['wd_analysis_condas'] = __location__ + '/analysis_conda_files/'
     options_dict['__location__'] = __location__
 
     # --- create output directories
