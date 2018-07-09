@@ -61,8 +61,6 @@ rule quast:
 		'''
 
 rule nanoplot:
-    conda:
-        '{wd_analysis_condas}nanoplot.yaml'
     output:
         '{wd_analysis_summary}readset_analysis/nanostats.txt'
     threads:
