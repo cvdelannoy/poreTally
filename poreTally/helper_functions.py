@@ -121,7 +121,7 @@ def is_fasta(filename):
         raise ValueError('reference file does not appear to be in fasta format')
     with open(filename, "r") as handle:
         _ = SeqIO.parse(handle, "fasta")
-        return filename
+        return os.path.realpath(filename)
 
 
 def is_user_info_yaml(filename):
@@ -139,7 +139,7 @@ def is_user_info_yaml(filename):
     for ri in required_info:
         if ri not in info_list:
             raise ValueError('{} not in info file, but required'.format(ri))
-    return filename
+    return os.path.realpath(filename)
 
 
 def is_valid_repo(repo_url):
@@ -191,7 +191,7 @@ def is_valid_slurm_config(filename):
         missing = ', '.join(missing)
         raise ValueError('slurm json __default__ settings does not contain {}, '
                          'but this is required'.format(missing))
-    return filename
+    return os.path.realpath(filename)
 
 
 def is_integer(val):

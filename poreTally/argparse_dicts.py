@@ -11,18 +11,21 @@ working_dir = ('-w', '--working-dir', {
     'help': 'Intermediate folder where results are stored.'
 })
 
+# TODO: implement argcheck
 fast5_dir = ('-f', '--fast5-dir', {
-    'type': str,
+    'type': lambda x: os.path.realpath(x),
     'required': False,
     'help': 'Directory containing fast5-reads for the provided reads. required for some tools (e.g. Nanopolish).'
 })
 
+# TODO: implement argcheck
 gff_file = ('-g', '--gff-file', {
-    'type': str,
+    'type': lambda x: os.path.realpath(x),
     'required': False,
     'help': 'Gene annotation file in GFF(v2/3) format. If provided, report number of found genes.'
 })
 
+# TODO: implement argcheck
 pipelines = ('-p', '--pipelines', {
     'type': str,
     'required': False,
@@ -71,8 +74,9 @@ git = ('--git', {
 })
 
 # Positional
+# TODO: implement argcheck
 reads_dir = ('reads_dir', {
-    'type': str,
+    'type': lambda x: os.path.realpath(x),
     'nargs': '+',
     'help': 'directory or list of MinION reads in fastq format'
 })
