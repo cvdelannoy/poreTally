@@ -87,7 +87,7 @@ def get_assemblies_parser():
     parser.add_argument(pipelines[0], pipelines[1], **pipelines[2])
     parser.add_argument(ref_fasta[0], ref_fasta[1], **ref_fasta[2])
     parser.add_argument(threads_per_job[0], threads_per_job[1], **threads_per_job[2])
-    parser.add_argument(disable_slurm[0], disable_slurm[1], **disable_slurm[2])
+    parser.add_argument(slurm_config[0], slurm_config[1], **slurm_config[2])
     return parser
 
 
@@ -96,7 +96,7 @@ def get_analysis_parser():
     parser.add_argument(ref_fasta[0], ref_fasta[1], **ref_fasta[2])
     parser.add_argument(working_dir[0], working_dir[1], **working_dir[2])
     parser.add_argument(gff_file[0], gff_file[1], **gff_file[2])
-    parser.add_argument(disable_slurm[0], disable_slurm[1], **disable_slurm[2])
+    parser.add_argument(slurm_config[0], slurm_config[1], **slurm_config[2])
     parser.add_argument(user_info[0], user_info[1], **user_info[2])
     parser.add_argument(threads_per_job[0], threads_per_job[1], **threads_per_job[2])
     return parser
@@ -122,7 +122,7 @@ def get_benchmark_parser():
     parser.add_argument(pipelines[0], pipelines[1], **pipelines[2])
     parser.add_argument(ref_fasta[0], ref_fasta[1], **ref_fasta[2])
     parser.add_argument(threads_per_job[0], threads_per_job[1], **threads_per_job[2])
-    parser.add_argument(disable_slurm[0], disable_slurm[1], **disable_slurm[2])
+    parser.add_argument(slurm_config[0], slurm_config[1], **slurm_config[2])
     parser.add_argument(gff_file[0], gff_file[1], **gff_file[2])
     parser.add_argument(user_info[0], user_info[1], **user_info[2])
     parser.add_argument(git[0], **git[1])
