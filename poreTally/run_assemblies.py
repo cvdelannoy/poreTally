@@ -86,7 +86,7 @@ def main(args):
         cmds_dict[pipeline] = cmds
         with open(wd_commands + pipeline + '.cmd', 'w') as f:
             f.write(assembly_cmds)
-    sf_string = 'workdir: {}\n'.format(wd_envs)  # save envs in same location as results (otherwise defaults to current loc)
+    sf_string = 'workdir: \'{}\'\n\n'.format(wd_envs)  # save envs in same location as results (otherwise defaults to current loc)
     sf_string += hp.dict_to_snakefile(cmds_dict, sf_dict)
     with open(sf_fn, 'a') as sf:
         sf.write(sf_string)
