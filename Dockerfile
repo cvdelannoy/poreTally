@@ -19,6 +19,6 @@ RUN rm Miniconda-latest-Linux-x86_64.sh
 ENV PATH=/miniconda/bin:${PATH}
 RUN conda update -y conda
 
+RUN pip3 install --upgrade setuptools
 RUN pip3 install git+https://github.com/cvdelannoy/poreTally.git
 RUN poreTally -h
-
