@@ -62,5 +62,11 @@ def main(args):
     sf = sf.format(**options_dict)
     with open(sf_fn, 'w') as sf_handle:
         sf_handle.write(sf)
-    snakemake.snakemake(sf_fn,
-                        use_conda=True)
+
+    sm_dict = {'use_conda': True}
+
+    if args.slurm_config is not None:
+        sm_dict['cluster'] = 'srun'
+        sm_dict['cluster_config'] = args.slurm_config
+
+    snakemake.snakemake(sf_fn, **sm_dict)
