@@ -22,4 +22,4 @@ RUN conda update -y conda
 RUN pip3 install --upgrade setuptools
 RUN pip3 install git+https://github.com/cvdelannoy/poreTally.git
 RUN poreTally -h
-ENTRYPOINT /usr/local/bin/poreTally
+ENTRYPOINT ["/usr/local/bin/poreTally"]
