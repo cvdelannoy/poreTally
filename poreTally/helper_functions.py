@@ -118,18 +118,18 @@ def is_fasta(filename):
     Check whether file is existing, and if so, check if in fasta format.
     """
     if not os.path.isfile(filename):
-        return False
+        raise ValueError('reference file does not appear to be in fasta format')
     with open(filename, "r") as handle:
-        fasta = SeqIO.parse(handle, "fasta")
-        return any(fasta)
+        _ = SeqIO.parse(handle, "fasta")
+        return filename
 
 
 def is_user_info_yaml(filename):
     """
-    Check whether file is existing, and if so, check if in fasta format.
+    Check whether file is existing,
     """
     if not os.path.isfile(filename):
-        return False
+        raise ValueError('{} not found'.format(filename))
     with open(filename, "r") as handle:
         content = yaml.load(handle)
     if not type(content) is dict:
