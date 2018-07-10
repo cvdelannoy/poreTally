@@ -15,7 +15,7 @@ def parse_output_path(location):
     """
     Take given path name. Add '/' if path. Check if exists, if not, make dir and subdirs.
     """
-    location = os.path.abspath(location) + '/'
+    location = os.path.realpath(location) + '/'
     if not os.path.isdir(location):
         os.makedirs(location)
     return location

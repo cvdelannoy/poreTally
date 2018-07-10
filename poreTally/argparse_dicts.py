@@ -1,12 +1,12 @@
 import argparse
 import os
 
-from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo, is_valid_slurm_config
+from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo, is_valid_slurm_config, parse_output_path
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 working_dir = ('-w', '--working-dir', {
-    'type': str,
+    'type': lambda x: parse_output_path(x),
     'required': True,
     'help': 'Intermediate folder where results are stored.'
 })

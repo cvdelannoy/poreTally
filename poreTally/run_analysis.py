@@ -11,7 +11,6 @@ def main(args):
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
     # additional argument checks
-    print(args.working_dir)
     if not os.path.isdir(args.working_dir):
         raise ValueError('Working directory not found')
 
