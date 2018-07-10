@@ -1,11 +1,10 @@
 import argparse
 import os
 
-from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo
+from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo, is_valid_slurm_config
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
-# TODO: argument checks
 working_dir = ('-w', '--working-dir', {
     'type': str,
     'required': True,
@@ -35,24 +34,25 @@ pipelines = ('-p', '--pipelines', {
 })
 
 user_info = ('-i', '--user-info', {
-    'type': str,
+    'type': lambda x: is_user_info_yaml(x),
     'required': True,
     'help': 'Provide a yaml-file with author names, organism name and/or NCBI Taxonomy ID, basecaller,'
             ' ONT flowcell type and ONT chemistry kit.'
 })
 
 ref_fasta = ('-r', '--ref-fasta', {
-    'type': str,
+    'type': lambda x: is_fasta(x),
     'required': True,
     'help': 'Reference genome in fasta-format, not provided to assemblers but used to estimate genome size and stored '
             'for later use in analysis step.'
 })
 
-slurm_disabled = ('-s', '--disable-slurm', {
-    'action': 'store_true',
+slurm_config = ('-s', '--slurm-config', {
+    'type': lambda x: is_valid_slurm_config(x),
     'required': False,
-    'help': 'Do NOT submit assembly tasks to the SLURM scheduler for parallel processing '
-            '(default: use SLURM if detected).'
+    'default': None,
+    'help': 'If jobs need to be run using SLURM, provide a json-file containing header information, '
+            '(i.e. partition, running time, memory etc.)'
 })
 
 threads_per_job = ('-t', '--threads-per-job', {
@@ -87,7 +87,7 @@ def get_assemblies_parser():
     parser.add_argument(pipelines[0], pipelines[1], **pipelines[2])
     parser.add_argument(ref_fasta[0], ref_fasta[1], **ref_fasta[2])
     parser.add_argument(threads_per_job[0], threads_per_job[1], **threads_per_job[2])
-    parser.add_argument(slurm_disabled[0], slurm_disabled[1], **slurm_disabled[2])
+    parser.add_argument(disable_slurm[0], disable_slurm[1], **disable_slurm[2])
     return parser
 
 
@@ -96,7 +96,7 @@ def get_analysis_parser():
     parser.add_argument(ref_fasta[0], ref_fasta[1], **ref_fasta[2])
     parser.add_argument(working_dir[0], working_dir[1], **working_dir[2])
     parser.add_argument(gff_file[0], gff_file[1], **gff_file[2])
-    parser.add_argument(slurm_disabled[0], slurm_disabled[1], **slurm_disabled[2])
+    parser.add_argument(disable_slurm[0], disable_slurm[1], **disable_slurm[2])
     parser.add_argument(user_info[0], user_info[1], **user_info[2])
     parser.add_argument(threads_per_job[0], threads_per_job[1], **threads_per_job[2])
     return parser
@@ -122,7 +122,7 @@ def get_benchmark_parser():
     parser.add_argument(pipelines[0], pipelines[1], **pipelines[2])
     parser.add_argument(ref_fasta[0], ref_fasta[1], **ref_fasta[2])
     parser.add_argument(threads_per_job[0], threads_per_job[1], **threads_per_job[2])
-    parser.add_argument(slurm_disabled[0], slurm_disabled[1], **slurm_disabled[2])
+    parser.add_argument(disable_slurm[0], disable_slurm[1], **disable_slurm[2])
     parser.add_argument(gff_file[0], gff_file[1], **gff_file[2])
     parser.add_argument(user_info[0], user_info[1], **user_info[2])
     parser.add_argument(git[0], **git[1])

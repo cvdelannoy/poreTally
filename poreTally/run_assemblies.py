@@ -13,6 +13,7 @@ def main(args):
     wd = hp.parse_output_path(args.working_dir)
 
     # Make necessary subdirs
+    wd_envs = hp.parse_output_path(wd + 'envs/')
     wd_results = hp.parse_output_path(wd + 'assembler_results/')
     wd_assemblies = hp.parse_output_path(wd_results + 'assemblies/')
     wd_logs = hp.parse_output_path(wd_results + 'log_files/')
@@ -85,10 +86,17 @@ def main(args):
         cmds_dict[pipeline] = cmds
         with open(wd_commands + pipeline + '.cmd', 'w') as f:
             f.write(assembly_cmds)
-    sf_string = hp.dict_to_snakefile(cmds_dict, sf_dict)
+    sf_string = 'workdir: {}\n'.format(wd_envs)  # save envs in same location as results (otherwise defaults to current loc)
+    sf_string += hp.dict_to_snakefile(cmds_dict, sf_dict)
     with open(sf_fn, 'a') as sf:
         sf.write(sf_string)
-    
-    snakemake.snakemake(sf_fn,
-                        targets=args.pipelines,
-                        use_conda=True)
+
+    sm_dict = {'targets': args.pipelines,
+               'use_conda': True}
+
+    # ---- Cluster-related ----
+    if args.slurm_config is not None:
+        sm_dict['cluster'] = 'srun'
+        sm_dict['cluster_config'] = args.slurm_config
+
+    snakemake.snakemake(sf_fn, **sm_dict)

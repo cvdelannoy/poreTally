@@ -2,6 +2,7 @@ import os
 import sys
 import fnmatch
 import yaml
+import json
 import warnings
 from Bio import SeqIO
 from git import Repo, GitCommandError
@@ -132,15 +133,13 @@ def is_user_info_yaml(filename):
     with open(filename, "r") as handle:
         content = yaml.load(handle)
     if not type(content) is dict:
-        warnings.warn('{} not read as yaml'.format(filename))
-        return False
-    required_info = ['authors', 'organism', 'basecaller', 'flowcell', 'kit']
+        raise ValueError('{} not a yaml'.format(filename))
+    required_info = ['authors', 'species', 'basecaller', 'flowcell', 'kit']
     info_list = list(content)
     for ri in required_info:
         if ri not in info_list:
-            warnings.warn('{} not in info file, but required'.format(ri))
-            return False
-    return True
+            raise ValueError('{} not in info file, but required'.format(ri))
+    return filename
 
 
 def is_valid_repo(repo_url):
@@ -163,6 +162,37 @@ def is_valid_repo(repo_url):
     finally:
         rmtree(repo_dir)
     return repo_url
+
+
+def is_valid_slurm_config(filename):
+    """
+    Test if provided slurm config file contains minimum info to run. Also check
+    whether srun is actually available on the system.
+    """
+    srun_test = os.popen('command -V srun').read()
+    if 'srun' not in srun_test:
+        raise ValueError('A SLURM config file was provided, but '
+                         'srun does not seem to be a command on this system.')
+    try:
+        with open(filename, 'r') as f:
+            json_tst = json.load(f)
+    except ValueError:
+        print('{} is not recognized as a json-file'.format(filename))
+        sys.exit(1)
+    except FileNotFoundError:
+        print('{} cannot be found'.format(filename))
+        sys.exit(1)
+    if '__default__' not in json_tst:
+        raise ValueError('slurm json should contain at least __default__ settings.')
+    check_list = ['partition', 'time', 'mem-per-cpu', 'output', 'error']
+    test_bools = [x not in json_tst['__default__'] for x in check_list]
+    if any(test_bools):
+        missing = [check_list[ci] for ci in range(len(check_list)) if test_bools[ci]]
+        missing = ', '.join(missing)
+        raise ValueError('slurm json __default__ settings does not contain {}, '
+                         'but this is required'.format(missing))
+    return filename
+
 
 def is_integer(val):
     if type(val) is int:
