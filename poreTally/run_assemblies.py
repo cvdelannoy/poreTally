@@ -88,7 +88,7 @@ def main(args):
             f.write(assembly_cmds)
     sf_string = 'workdir: \'{}\'\n\n'.format(wd_envs)  # save envs in same location as results (otherwise defaults to current loc)
     sf_string += hp.dict_to_snakefile(cmds_dict, sf_dict)
-    sf_string = sf_string.replace('#\#', '\\')  # hacky solution for backslash n's that need to stay that way
+    sf_string = sf_string.replace('#\\#', '\\')  # hacky solution for backslash n's that need to stay that way
     with open(sf_fn, 'a') as sf:
         sf.write(sf_string)
 
