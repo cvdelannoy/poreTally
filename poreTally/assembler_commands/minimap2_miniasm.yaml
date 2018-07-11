@@ -13,9 +13,7 @@ description: >
 commands: |
   minimap2 -x ava-ont -t {NB_THREADS} {{input.fastq}} {{input.fastq}} | gzip -1 > minimap2.paf.gz
   miniasm -f {{input.fastq}} minimap2.paf.gz > minimap2_miniasm.gfa
-  echo $PWD
-  ls
-  awk '/^S/{print ">"$2"\n"$3}' minimap2_miniasm.gfa | fold > {{output}}
+  awk '/^S/{print ">"$2"#\#n"$3}' minimap2_miniasm.gfa | fold > {{output}}
 conda:
   channels:
     - bioconda
