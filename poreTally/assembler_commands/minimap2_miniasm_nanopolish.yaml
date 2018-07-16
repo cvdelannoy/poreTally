@@ -14,8 +14,8 @@ description: >
   Here, nanopolish is used to polish the assembly using the raw signal.
 commands: |
   minimap2 -x ava-ont -t {{threads}} {{input.fastq}} {{input.fastq}} | gzip -1 > minimap2.paf.gz
-  miniasm -f {{input.fastq}} minimap2_miniasm/minimap2.paf.gz > minimap2_miniasm.gfa
-  awk '/^S/{{{{print ">"$2"\\n"$3}}}}' minimap2_miniasm.gfa | fold > minimap2_miniasm.fasta
+  miniasm -f {{input.fastq}} minimap2.paf.gz > minimap2_miniasm.gfa
+  grep -Po '(?<=S\t)utg.+' minimap2_miniasm.gfa | awk '{{{{print ">"$1"\\n"$2}}}}' | fold > minimap2_miniasm.fasta
   minimap2 -d draft.mmi minimap2_miniasm.fasta
   cp {{input.fastq}} input.fastq
   minimap2 -ax map-ont -t {{threads}} draft.mmi  input.fastq | samtools sort -@ {{threads}} -o reads_sorted.bam -T reads_sorted.tmp -
@@ -35,6 +35,7 @@ conda:
   dependencies:
     - minimap2
     - miniasm
+    - pysam
     - nanopolish
     - samtools
     - parallel
