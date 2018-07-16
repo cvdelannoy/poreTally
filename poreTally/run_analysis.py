@@ -33,6 +33,8 @@ def main(args):
     options_dict['wd_assembler_results'] = args.working_dir + 'assembler_results/'
     options_dict['wd_assemblies'] = args.working_dir + 'assembler_results/assemblies/'
     assemblies_list = hp.parse_input_path(options_dict['wd_assemblies'], pattern='*.fasta')
+    if len(assemblies_list) == 0:
+        raise ValueError('No succesful assemblies found to analyze!')
     assemblies_names_list = [os.path.splitext(os.path.basename(af))[0] for af in assemblies_list]
     options_dict['assemblies_string'] = ' '.join(assemblies_names_list)
     with open(args.user_info, 'r') as f:
