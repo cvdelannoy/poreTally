@@ -25,9 +25,7 @@ commands: |
   threads_per_process=1
   np_path=$(command -v nanopolish | xargs realpath | xargs dirname)
   python "${{{{np_path}}}}"/nanopolish_makerange.py minimap2_miniasm.fasta | parallel --no-notice --results nanopolish.results -P 4 nanopolish variants --consensus polished.{{{{1}}}}.fa -w {{{{1}}}} -r input.fastq -b reads_sorted.bam -g minimap2_miniasm.fasta -t ${{{{threads_per_process}}}}
-  if grep -qP 'polished\.*\.fa' . ; then
-    python "${{{{np_path}}}}"/nanopolish_merge.py polished.*.fa > {{output}}
-  fi
+  python "${{{{np_path}}}}"/nanopolish_merge.py polished.*.fa > {{output}}
 conda:
   channels:
     - bioconda
