@@ -30,10 +30,12 @@ pipelines = ('-p', '--pipelines', {
     'type': str,
     'required': False,
     'nargs': '+',
-    'default': ['canu', 'flye', 'smartdenovo', 'minimap2_miniasm'],
+    'default': ['default'],
     'help': 'Run benchmark for one or more specific pipelines, instead of the standard 5. '
-            'Name must either match name of the corresponding yaml files containing the commands in the assembler_commands '
-            'folder), without the yaml extension, or be a path to a yaml file defining the commands and prerequisites.'
+            'Name must either match name of the corresponding yaml files containing the commands '
+            'in the assembler_commands folder, without the yaml extension, or be a path to a yaml file '
+            'defining the commands and prerequisites. Provide keyword \'default\' to also run Canu, Flye,'
+            'SMARTdenovo, Minimap2+Miniasm and Minimap2+Miniasm+Nanopolish'
 })
 
 user_info = ('-i', '--user-info', {
