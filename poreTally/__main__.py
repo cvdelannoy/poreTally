@@ -47,7 +47,7 @@ def main(args=None):
     )
 
     for cmd, hlp, ap, fnc in commands:
-            subparser = subparsers.add_parser(cmd, add_help=False, parents=[ap, ])
+            subparser = subparsers.add_parser(cmd, help=hlp, parents=[ap, ])
             subparser.set_defaults(func=fnc)
     args = parser.parse_args(args)
     args.func(args)
