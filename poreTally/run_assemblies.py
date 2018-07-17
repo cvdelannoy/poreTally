@@ -100,7 +100,7 @@ def main(args):
 
     # ---- Cluster-related ----
     if args.slurm_config is not None:
-        sm_dict['cluster'] = 'srun'
+        sm_dict['cluster'] = 'sbatch'
         sm_dict['cluster_config'] = args.slurm_config
 
     snakemake.snakemake(sf_fn, **sm_dict)
