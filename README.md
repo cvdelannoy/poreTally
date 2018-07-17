@@ -1,9 +1,9 @@
 # poreTally: standardized nanopore reads assembler benchmarking
 #### [Carlos de Lannoy](https://www.vcard.wur.nl/Views/Profile/View.aspx?id=77824), [Dick de Ridder](https://www.vcard.wur.nl/Views/Profile/View.aspx?id=56806&ln=eng)
 
-poreTally brings all you need to benchmark MinION assembly pipelines together. It also generates a report for you in article style and can publish it in a readable format on Github/Gitlab.
-
-#### NOTE: PRODUCT IN DEVELOPMENT, USE WITH CAUTION
+poreTally brings all you need to benchmark MinION assembly pipelines
+together. It also generates a report for you in article style, which you
+can publish in a readable format on Github/Gitlab.
 
 ## Installing poreTally
 Before installing poreTally, ensure you have python3, miniconda/anaconda and git
@@ -29,7 +29,8 @@ docker run -t -v mount_this:to_that poretally run_benchmark -h
 ## Running
 We aimed to make benchmarking with poreTally as easy to run as possible.
 
-The entire analysis process (assemble, analyze, publish) is strted in one command:
+The entire analysis process (assemble, analyze, publish) is started in
+one command:
 ```
 poreTally run_benchmark
                 -w path/to/working_directory \
@@ -37,6 +38,7 @@ poreTally run_benchmark
                 -f path/to/fast5_files_dir \
                 -g gene_annotation.gff \
                 -i user_info.yaml \
+                --git git@github.com:username/repository_to_store_results.git \
                 path/to/read_fastqs_dir
 ```
 
@@ -59,7 +61,8 @@ kit: SQK-LSK108
 
 Depending on your dataset and system, you may need some extra options:
 - -s : if pipelines and analyses should be run in parallel using SLURM supply a json-file with SLURM header info.
-Ensure that there is at least a \_\_default\_\_. A minimal example could be:
+Ensure that there is at least a \_\_default\_\_. Add other items if you want
+a given pipeline to run with different parameters. For example:
 ```
 {
     "__default__" :
@@ -70,9 +73,12 @@ Ensure that there is at least a \_\_default\_\_. A minimal example could be:
         "partition" : "your_favorite_partition",
         "mem-per-cpu": "4096",
         "cpus-per-task": 8
+    },
+    "minimap2_miniasm":
+    {
+        "time" : "01:00:00"
     }
 }
-
 ```
 - -p : Define which pipelines you want to run. Provide the name of the text file in the `assembler_commands` folder in
 which the commands are stored, as a yaml. E.g. to run only SMARTdenovo, use: `-p smartdenovo`. Alternatively, provide a
