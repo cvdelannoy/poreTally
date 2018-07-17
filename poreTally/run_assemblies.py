@@ -104,5 +104,6 @@ def main(args):
     if args.slurm_config is not None:
         sm_dict['cluster'] = 'sbatch --ntasks {nb_jobs}'.format(nb_jobs=nb_pipelines)
         sm_dict['cluster_config'] = args.slurm_config
+        sm_dict['nodes'] = nb_pipelines
 
     snakemake.snakemake(sf_fn, **sm_dict)
