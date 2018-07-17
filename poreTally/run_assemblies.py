@@ -46,9 +46,13 @@ def main(args):
     sf_fn = wd + 'Snakefile_assemblies_' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     cmds_dict = dict()
     sf_dict = dict()
+    if 'default' in args.pipelines:
+        args.pipelines += ['canu', 'flye', 'smartdenovo', 'minimap2_miniasm', 'minimap2_miniasm_nanopolish']
+        args.pipelines.remove('default')
     for pipeline in args.pipelines:
         if os.path.isfile(pipeline):
             yaml_fn = pipeline
+            pipeline = os.path.splitext(os.path.basename(pipeline))[0]
         else:
             yaml_fn = __location__ + '/assembler_commands/' + pipeline + '.yaml'
         if os.path.isfile(yaml_fn):
