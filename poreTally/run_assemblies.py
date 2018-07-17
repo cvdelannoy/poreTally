@@ -49,6 +49,7 @@ def main(args):
     if 'default' in args.pipelines:
         args.pipelines += ['canu', 'flye', 'smartdenovo', 'minimap2_miniasm', 'minimap2_miniasm_nanopolish']
         args.pipelines.remove('default')
+    nb_pipelines = 0
     for pipeline in args.pipelines:
         if os.path.isfile(pipeline):
             yaml_fn = pipeline
@@ -90,6 +91,7 @@ def main(args):
         cmds_dict[pipeline] = cmds
         with open(wd_commands + pipeline + '.cmd', 'w') as f:
             f.write(assembly_cmds)
+        nb_pipelines += 1
     sf_string = 'workdir: \'{}\'\n\n'.format(wd_envs)  # save envs in same location as results (otherwise defaults to current loc)
     sf_string += hp.dict_to_snakefile(cmds_dict, sf_dict)
     with open(sf_fn, 'a') as sf:
@@ -100,7 +102,7 @@ def main(args):
 
     # ---- Cluster-related ----
     if args.slurm_config is not None:
-        sm_dict['cluster'] = 'sbatch'
+        sm_dict['cluster'] = 'sbatch --ntasks {nb_jobs}'.format(nb_jobs=nb_pipelines)
         sm_dict['cluster_config'] = args.slurm_config
 
     snakemake.snakemake(sf_fn, **sm_dict)
