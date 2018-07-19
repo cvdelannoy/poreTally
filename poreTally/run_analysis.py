@@ -2,6 +2,7 @@ import os
 import datetime
 import yaml
 import snakemake
+import shutil
 
 import helper_functions as hp
 from Metadata import Metadata
@@ -25,6 +26,8 @@ def main(args):
     options_dict['__location__'] = __location__
 
     # --- create output directories
+    if os.path.isdir(options_dict['wd_analysis']):
+        shutil.rmtree(options_dict['wd_analysis'])
     _ = hp.parse_output_path(options_dict['wd_analysis'] + 'quast')
     _ = hp.parse_output_path(options_dict['wd_analysis'] + 'jellyfish')
     _ = hp.parse_output_path(options_dict['wd_analysis'] + 'readset_analysis')
