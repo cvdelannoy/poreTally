@@ -14,6 +14,9 @@ import publish_results
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
+    if len(args) == 0:
+        print('poreTally requires arguments, try poreTally -h')
+        quit()
 
     commands = [
         ('run_benchmark',
