@@ -18,6 +18,7 @@ def main(args):
     args.working_dir = os.path.realpath(args.working_dir) + '/'
 
     options_dict = dict()
+    options_dict['wd_envs'] = hp.parse_output_path(args.working_dir + 'envs/')
     options_dict['threads'] = args.threads_per_job
     options_dict['ref_fasta'] = os.path.realpath(args.ref_fasta)
     options_dict['reads_fastq'] = args.working_dir + 'all_reads.fastq'

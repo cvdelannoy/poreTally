@@ -5,7 +5,9 @@ import os
 
 ASSEMBLERS='{assemblies_string}'.split()
 QUAST_EXTS='fplot rplot'.split()
-    
+
+workdir: {wd_envs}
+
 rule:
     input:
         '{wd_analysis_summary}README.md'
