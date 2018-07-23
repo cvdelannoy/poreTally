@@ -1,11 +1,13 @@
 import os
 from git import Repo
 from shutil import rmtree
+import pexpect
 from distutils.dir_util import copy_tree
 import requests
 from getpass import getpass
 from helper_functions import parse_output_path, parse_input_path
 from time import gmtime, strftime
+import sys
 
 
 def main(args):
@@ -48,7 +50,7 @@ def main(args):
             github_username = input('Github username for the account from which you want to submit results: ')
 
             ses.auth = (github_username, getpass('Enter Github password: '))
-            submission_url = 'git@github.com:{git_id}/poreTally_collective_submissions.git'.format(git_id=github_username)
+            submission_url = 'https://github.com/{git_id}/poreTally_collective_submissions.git'.format(git_id=github_username)
             fork_req = ses.post('https://api.github.com/repos/cvdelannoy/poreTally_collective_submissions/forks')
             if int(fork_req.status_code) == 202:
                 break
@@ -60,31 +62,39 @@ def main(args):
 
         # ---- add, commit, push ----
         print('\nPushing results to fork...')
-        while True:
-            all_submissions_dir = os.path.realpath(args.working_dir) + '/analysis/collective_submissions/'
-            if os.path.isdir(all_submissions_dir):
-                rmtree(all_submissions_dir)
-            cur_foldername = strftime('%Y%m%d%H%M%S', gmtime())
-            repo_obj = Repo.clone_from(url=submission_url, to_path=all_submissions_dir)
-            branch_obj = repo_obj.create_head(cur_foldername)
-            repo_obj.head.reference = branch_obj
-            repo_obj.head.reset(index=True, working_tree=True)
-            submission_dir = parse_output_path(all_submissions_dir + cur_foldername)
-            copy_tree(summary_dir, submission_dir)
-            file_list = [f for f in parse_input_path(submission_dir) if '.git' not in f]
-            repo_obj.index.add(file_list)
-            repo_obj.index.commit(message='collective benchmark submission')
-            push_obj = repo_obj.git.push('origin', 'HEAD:{}'.format(cur_foldername))
-            if 'rejected' in push_obj.summary:
-                _ = input('Push was rejected, possibly due to an SSH-authentication error. '
-                          'Was an SSH key pair set up for account {}? If not, you can set one now and'
-                          'press enter to try again or ctrl-c to quit.'.format(github_username))
-            else:
-                break
+        all_submissions_dir = os.path.realpath(args.working_dir) + '/analysis/collective_submissions/'
+        if os.path.isdir(all_submissions_dir):
+            rmtree(all_submissions_dir)
+        cur_foldername = strftime('%Y%m%d%H%M%S', gmtime())
+        repo_obj = Repo.clone_from(url=submission_url, to_path=all_submissions_dir)
+        branch_obj = repo_obj.create_head(cur_foldername)
+        repo_obj.head.reference = branch_obj
+        repo_obj.head.reset(index=True, working_tree=True)
+        submission_dir = parse_output_path(all_submissions_dir + cur_foldername)
+        copy_tree(summary_dir, submission_dir)
+        file_list = [f for f in parse_input_path(submission_dir) if '.git' not in f]
+        repo_obj.index.add(file_list)
+        repo_obj.index.commit(message='collective benchmark submission')
+
+        # child.logfile = sys.stdout
+        child = pexpect.spawn('git push origin HEAD:{branch}'.format(branch=cur_foldername),
+                              cwd=submission_dir)
+        child.expect('Username for \'https://github.com\':.*', timeout=2)
+        child.sendline(ses.auth[0]+'\n')
+        child.expect('{un}\r\n\r\nPassword for \'https://{un}@github.com\':.*'.format(un=ses.auth[0]))
+        child.sendline(ses.auth[1])
+        push_check = child.read()
+        if b'[new branch] HEAD' not in push_check:
+            ValueError('''Pushing to collective benchmark fork has failed...Sorry, that should not happen!
+            
+            Please report the error below on the poreTally github:
+            
+            {push_txt}'''.format(push_txt=push_check))
 
         # ---- submit pull request ----
         print('\nResults pushed! Issuing pull request...')
         pull_url = 'https://api.github.com/repos/cvdelannoy/poreTally_collective_submissions/pulls'
+        pull_bool = False
         for _ in range(3):
             pull_params = {'title': 'poreTally_collective_submissions',
                            'base': 'master',
@@ -93,6 +103,7 @@ def main(args):
             if int(pull_req.status_code) == 201:
                 print('\nResults were sucessfully submitted to the poreTally collective benchmark!\n\n'
                       'Keep an Eye on github.com/cvdelannoy/poreTally_collective for future analyses.')
+                pull_bool = True
                 break
             elif int(pull_req.status_code) == 401:
                 print('Authentication for Github account {} failed when attempting a pull request. '
@@ -100,3 +111,8 @@ def main(args):
             else:
                 print('Authentication for issuing a pull request failed due to some unforeseen '
                       'circumstance (HTTP status code {status}). Retrying... '.format(status=pull_req.status_code))
+        if not pull_bool:
+            ValueError('''Making a pull request for the collective benchmark fork has failed...Sorry, that 
+            should not happen! Please report the error below on the poreTally github:
+            
+            HTTP status code {sc}: {pull_txt}'''.format(sc=pull_req.status_code, pull_txt=pull_req.reason))
