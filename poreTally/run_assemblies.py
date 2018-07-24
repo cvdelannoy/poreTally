@@ -1,7 +1,9 @@
 import helper_functions as hp
 import shutil
 import yaml
+import json
 import os
+from subprocess import check_output
 import warnings
 import snakemake
 import datetime
@@ -102,8 +104,20 @@ def main(args):
 
     # ---- Cluster-related ----
     if args.slurm_config is not None:
+        with open(args.slurm_config, 'r') as slurmf:
+            slurm_config_dict = json.load(slurmf)
+        partition_name = slurm_config_dict['__default__']['partition']
+        sinfo_list = check_output(['sinfo']).decode('utf-8').split('\n')
+        sinfo_header = {n: i for i, n in enumerate(sinfo_list[0].split())}
+        nb_nodes = None
+        for sil in sinfo_list[1:]:
+            if partition_name in sil:
+                nb_nodes = sil.split()[sinfo_header['NODES']]
+                break
+        if nb_nodes is None:
+            raise ValueError('supplied SLURM partition {} not found'.format(partition_name))
         sm_dict['cluster'] = 'sbatch --ntasks {nb_jobs}'.format(nb_jobs=nb_pipelines)
         sm_dict['cluster_config'] = args.slurm_config
-        sm_dict['nodes'] = nb_pipelines
+        sm_dict['nodes'] = min(nb_nodes, nb_pipelines)
 
     snakemake.snakemake(sf_fn, **sm_dict)

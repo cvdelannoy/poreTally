@@ -61,7 +61,8 @@ kit: SQK-LSK108
 
 Depending on your dataset and system, you may need some extra options:
 - -s : if pipelines and analyses should be run in parallel using SLURM supply a json-file with SLURM header info.
-Ensure that there is at least a \_\_default\_\_. Add other items if you want
+Ensure that there is at least a \_\_default\_\_. Partition should be
+stated there and nowhere else. Add other items if you want
 a given pipeline to run with different parameters. For example:
 ```
 {
