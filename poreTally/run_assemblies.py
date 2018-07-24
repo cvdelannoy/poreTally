@@ -112,7 +112,7 @@ def main(args):
         nb_nodes = None
         for sil in sinfo_list[1:]:
             if partition_name in sil:
-                nb_nodes = sil.split()[sinfo_header['NODES']]
+                nb_nodes = int(sil.split()[sinfo_header['NODES']])
                 break
         if nb_nodes is None:
             raise ValueError('supplied SLURM partition {} not found'.format(partition_name))
