@@ -119,9 +119,15 @@ def main(args):
             raise ValueError('supplied SLURM partition {} not found'.format(partition_name))
         nb_nodes = min(nb_nodes, nb_pipelines)
         sm_dict['nodes'] = nb_nodes
-        sm_dict['cluster'] = 'sbatch --ntasks-per-node {nb_tpn}'.format(nb_tpn=max(nb_pipelines // nb_nodes, 1))
+        tasks_per_node = max(nb_pipelines // nb_nodes, 1)
+        sbatch_line = 'sbatch --nodes={nbn} --ntasks-per-node={tpn} --cpus-per-task={cpt}'.format(nbn=nb_nodes,
+                                                                                                  tpn=tasks_per_node,
+                                                                                                  cpt=args.threads_per_job
+                                                                                                   )
+        for n in list(slurm_config_dict['__default__']):
+            sbatch_line += ' --{opt}={{cluster.{opt}}}'.format(opt=n)
+        sm_dict['cluster'] = sbatch_line
         sm_dict['cluster_config'] = args.slurm_config
         sm_dict['local_cores'] = args.threads_per_job
-        sm_dict['immediate_submit'] = True
 
     snakemake.snakemake(sf_fn, **sm_dict)
