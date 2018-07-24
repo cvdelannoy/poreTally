@@ -116,8 +116,9 @@ def main(args):
                 break
         if nb_nodes is None:
             raise ValueError('supplied SLURM partition {} not found'.format(partition_name))
-        sm_dict['cluster'] = 'sbatch --ntasks {nb_jobs}'.format(nb_jobs=nb_pipelines)
+        nb_nodes = min(nb_nodes, nb_pipelines)
+        sm_dict['nodes'] = nb_nodes
+        sm_dict['cluster'] = 'sbatch --ntasks-per-node {nb_tpn}'.format(nb_tpn=max(nb_pipelines // nb_nodes, 1))
         sm_dict['cluster_config'] = args.slurm_config
-        sm_dict['nodes'] = min(nb_nodes, nb_pipelines)
 
     snakemake.snakemake(sf_fn, **sm_dict)
