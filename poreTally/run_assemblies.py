@@ -84,6 +84,7 @@ def main(args):
             with open(wd_condas + pipeline + '.yaml', 'w') as cf:
                 yaml.dump(conda, cf, default_flow_style=False)
             sf_dict[pipeline]['conda'] = [wd_condas + pipeline + '.yaml']
+        sf_dict[pipeline]['group'] = 'pipelines'
         assembly_cmds = pl_dict['commands'].format(**param_dict)
         cmds = list()
         cmds.extend(hp.parse_version_commands(pl_dict['versions'],
