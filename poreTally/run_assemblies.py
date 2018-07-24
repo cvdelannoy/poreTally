@@ -100,7 +100,8 @@ def main(args):
         sf.write(sf_string)
 
     sm_dict = {'targets': args.pipelines,
-               'use_conda': True}
+               'use_conda': True,
+               'cores': args.threads_per_job}
 
     # ---- Cluster-related ----
     if args.slurm_config is not None:
@@ -120,5 +121,7 @@ def main(args):
         sm_dict['nodes'] = nb_nodes
         sm_dict['cluster'] = 'sbatch --ntasks-per-node {nb_tpn}'.format(nb_tpn=max(nb_pipelines // nb_nodes, 1))
         sm_dict['cluster_config'] = args.slurm_config
+        sm_dict['local_cores'] = args.threads_per_job
+        sm_dict['immediate_submit'] = True
 
     snakemake.snakemake(sf_fn, **sm_dict)
