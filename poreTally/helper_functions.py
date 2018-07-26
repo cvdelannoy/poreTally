@@ -95,7 +95,8 @@ def dict_to_snakefile(cmds_dict, sf_dict):
         for l in cmds_dict[rn]:
             if l:
                 if ' > ' in l:
-                    sf_out += 'echo $({} 2>&1 ) >> {{log}} 2>&1\n\t\t'.format(l)
+                    sf_out += '{} 2>> {{log}}\n\t\t'.format(l)
+                    # sf_out += 'echo $({} 2>&1 ) >> {{log}} 2>&1\n\t\t'.format(l)
                 else:
                     sf_out += '{} >> {{log}} 2>&1\n\t\t'.format(l)
         sf_out += '\'\'\'\n\n'
