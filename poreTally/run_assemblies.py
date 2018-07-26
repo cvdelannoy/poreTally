@@ -52,6 +52,7 @@ def main(args):
         args.pipelines += ['canu', 'flye', 'smartdenovo', 'minimap2_miniasm', 'minimap2_miniasm_nanopolish']
         args.pipelines.remove('default')
     nb_pipelines = 0
+    pipelines_list = []
     for pipeline in args.pipelines:
         if os.path.isfile(pipeline):
             yaml_fn = pipeline
@@ -84,7 +85,7 @@ def main(args):
             with open(wd_condas + pipeline + '.yaml', 'w') as cf:
                 yaml.dump(conda, cf, default_flow_style=False)
             sf_dict[pipeline]['conda'] = [wd_condas + pipeline + '.yaml']
-        sf_dict[pipeline]['group'] = 'pipelines'
+        sf_dict[pipeline]['group'] = ['pipelines']
         assembly_cmds = pl_dict['commands'].format(**param_dict)
         cmds = list()
         cmds.extend(hp.parse_version_commands(pl_dict['versions'],
@@ -95,12 +96,13 @@ def main(args):
         with open(wd_commands + pipeline + '.cmd', 'w') as f:
             f.write(assembly_cmds)
         nb_pipelines += 1
+        pipelines_list.append(pipeline)
     sf_string = 'workdir: \'{}\'\n\n'.format(wd_envs)  # save envs in same location as results (otherwise defaults to current loc)
     sf_string += hp.dict_to_snakefile(cmds_dict, sf_dict)
     with open(sf_fn, 'a') as sf:
         sf.write(sf_string)
 
-    sm_dict = {'targets': args.pipelines,
+    sm_dict = {'targets': pipelines_list,
                'use_conda': True,
                'cores': args.threads_per_job}
 
