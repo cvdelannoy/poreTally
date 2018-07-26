@@ -4,6 +4,9 @@ import os
 from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo, is_valid_slurm_config, parse_output_path
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+included_pipelines = os.listdir(__location__+ '/assembler_commands/')
+included_pipelines = [os.path.splitext(pl)[0] for pl in included_pipelines]
+included_pipelines = ', '.join(included_pipelines)
 
 working_dir = ('-w', '--working-dir', {
     'type': lambda x: parse_output_path(x),
@@ -32,10 +35,9 @@ pipelines = ('-p', '--pipelines', {
     'nargs': '+',
     'default': ['default'],
     'help': 'Run benchmark for one or more specific pipelines, instead of the standard 5. '
-            'Name must either match name of the corresponding yaml files containing the commands '
-            'in the assembler_commands folder, without the yaml extension, or be a path to a yaml file '
-            'defining the commands and prerequisites. Provide keyword \'default\' to also run Canu, Flye,'
-            'SMARTdenovo, Minimap2+Miniasm and Minimap2+Miniasm+Nanopolish'
+            'Given names must either be one of the included pipelines ({}), or be a path to a yaml file '
+            'defining the commands and prerequisites (mixing allowed). Provide keyword \'default\' to also run Canu, Flye,'
+            'SMARTdenovo, Minimap2+Miniasm and Minimap2+Miniasm+RaconX2'.format(included_pipelines)
 })
 
 user_info = ('-i', '--user-info', {

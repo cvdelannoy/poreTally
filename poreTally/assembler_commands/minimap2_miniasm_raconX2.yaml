@@ -1,0 +1,24 @@
+versions:
+  minimap2: 'minimap2 -V'
+  miniasm: 'miniasm -V'
+  racon: 'racon --version'
+description: >
+  Minimap2 is a fast all-vs-all mapper of reads that relies on sketches of sequences, composed 
+  of minimizers. Miniasm uses the found overlaps to construct an assembly graph.
+  As a consensus step is lacking in this pipeline, a post-assembly polishing step is performed
+  using minimap2+Racon twice.
+commands: |
+  minimap2 -x ava-ont -t {NB_THREADS} {{input.fastq}} {{input.fastq}} | gzip -1 > minimap2.paf.gz
+  miniasm -f {{input.fastq}} minimap2.paf.gz > minimap2_miniasm.gfa
+  grep -Po '(?<=S\t)utg.+\s[ACTG]+' minimap2_miniasm.gfa | awk '{{{{print ">"$1"\\n"$2}}}}' | fold > minimap2_miniasm.fasta
+  minimap2 -x ava-ont -t {NB_THREADS} minimap2_miniasm.fasta {{input.fastq}} > minimap2_readsToContigs1.paf
+  racon -t {NB_THREADS} {{input.fastq}} minimap2_readsToContigs1.paf minimap2_miniasm.fasta > minimap2_miniasm_raconX1.fasta
+  minimap2 -x ava-ont -t {NB_THREADS} minimap2_miniasm_raconX1.fasta {{input.fastq}} > minimap2_readsToContigs2.paf
+  racon -t {NB_THREADS} {{input.fastq}} minimap2_readsToContigs2.paf minimap2_miniasm_raconX1.fasta > {{output}}
+conda:
+  channels:
+    - bioconda
+  dependencies:
+    - minimap2
+    - miniasm
+    - racon

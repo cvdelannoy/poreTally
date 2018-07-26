@@ -49,7 +49,7 @@ def main(args):
     cmds_dict = dict()
     sf_dict = dict()
     if 'default' in args.pipelines:
-        args.pipelines += ['canu', 'flye', 'smartdenovo', 'minimap2_miniasm', 'minimap2_miniasm_nanopolish']
+        args.pipelines += ['canu', 'flye', 'smartdenovo', 'minimap2_miniasm', 'minimap2_miniasm_raconX2']
         args.pipelines.remove('default')
     nb_pipelines = 0
     pipelines_list = []
