@@ -122,7 +122,7 @@ def is_fasta(filename):
         raise ValueError('reference file does not appear to be in fasta format')
     with open(filename, "r") as handle:
         _ = SeqIO.parse(handle, "fasta")
-        return os.path.realpath(filename)
+    return os.path.realpath(filename)
 
 
 def is_user_info_yaml(filename):
@@ -164,6 +164,10 @@ def is_valid_repo(repo_url):
         rmtree(repo_dir)
     return repo_url
 
+def is_valid_fastq_path(path):
+    if len(parse_input_path(path, '*.f*q')) == 0:
+        raise ValueError('{} does not seem to contain fastq reads!')
+    return path
 
 def is_valid_slurm_config(filename):
     """

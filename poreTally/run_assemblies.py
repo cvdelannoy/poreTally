@@ -11,7 +11,7 @@ import datetime
 
 def main(args):
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-    fastq_list = hp.parse_input_path(args.reads_dir, pattern='*.fastq')
+    fastq_list = hp.parse_input_path(args.reads_dir, pattern='*.f*q')
     wd = args.working_dir
 
     # Make necessary subdirs

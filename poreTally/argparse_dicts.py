@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo, is_valid_slurm_config, parse_output_path
+from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo, is_valid_slurm_config, parse_output_path, is_valid_fastq_path
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 included_pipelines = os.listdir(__location__+ '/assembler_commands/')
@@ -80,7 +80,7 @@ git = ('--git', {
 # Positional
 # TODO: implement argcheck
 reads_dir = ('reads_dir', {
-    'type': lambda x: os.path.realpath(x),
+    'type': lambda x: is_valid_fastq_path(x),
     'nargs': '+',
     'help': 'directory or list of MinION reads in fastq format'
 })
