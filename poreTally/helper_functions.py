@@ -119,9 +119,11 @@ def is_fasta(filename):
     Check whether file is existing, and if so, check if in fasta format.
     """
     if not os.path.isfile(filename):
-        raise ValueError('reference file does not appear to be in fasta format')
+        raise ValueError('reference file not found')
     with open(filename, "r") as handle:
-        _ = SeqIO.parse(handle, "fasta")
+        is_fasta_bool = any(SeqIO.parse(handle, "fasta"))
+    if not is_fasta_bool:
+        raise ValueError('reference file does not appear to be in fasta format')
     return os.path.realpath(filename)
 
 
