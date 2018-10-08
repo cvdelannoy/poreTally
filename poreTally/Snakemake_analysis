@@ -48,7 +48,7 @@ rule jellyfish_reference:
 
 rule quast:
 	output:
-		report='{wd_analysis_summary}quast/report.tsv'{quast_output}
+		report='{wd_analysis_summary}quast/report.tsv'
 	threads:
 		{threads}
 	input:
@@ -58,8 +58,8 @@ rule quast:
 		echo "Quast: "$(quast.py --version |  grep -Po "(?<=QUAST v).+")  >> {wd_analysis_summary}/analysis_tool_versions.yaml
 		cd {wd_analysis}quast/
 		quast.py {{input}} --threads {{threads}} -o . -R {ref_fasta} --min-identity 90.0 --no-html --no-icarus --no-gc --no-sv --silent {quast_options}
-		cp report.tsv {wd_analysis_summary}quast/report.tsv
 		{quast_output_cmd}
+		cp report.tsv {wd_analysis_summary}quast/report.tsv
 		'''
 
 rule nanoplot:
@@ -130,7 +130,7 @@ rule multiqc:
     conda:
         '{wd_analysis_condas}multiqc.yaml'
     input:
-        expand('{wd_analysis_summary}quast/{{assembler}}.{{ext}}', assembler=ASSEMBLERS, ext=QUAST_EXTS),
+        # expand('{wd_analysis_summary}quast/{{assembler}}.{{ext}}', assembler=ASSEMBLERS, ext=QUAST_EXTS),
         expand('{wd_analysis_summary}jellyfish/{{assembler}}.count', assembler=ASSEMBLERS),
         '{wd_analysis_summary}jellyfish/reference.count',
         '{wd_analysis_summary}quast/report.tsv',
