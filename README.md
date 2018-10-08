@@ -44,7 +44,7 @@ poreTally run_benchmark
 
 Conda environments will automatically be created for assembly pipelines and analysis tools.
 
-Note that providing a gene annotation file (-a) and the original fast5 files (-f) is optional. Of course, gene finding
+Note that providing a gene annotation file (-g) and the original fast5 files (-f) is optional. Of course, gene finding
 on the finished assemblies and actions that require the fast5-files (only polishing by Nanopolish for now) will be
 disabled if you do not provide these files.
 
