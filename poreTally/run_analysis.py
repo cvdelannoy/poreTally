@@ -14,8 +14,8 @@ def main(args):
     # additional argument checks
     if not os.path.isdir(args.working_dir):
         raise ValueError('Working directory not found')
-
     args.working_dir = os.path.realpath(args.working_dir) + '/'
+    if os.path.isdir(args.working_dir + 'analysis/'): shutil.rmtree(args.working_dir + 'analysis/')
 
     options_dict = dict()
     options_dict['wd_envs'] = hp.parse_output_path(args.working_dir + 'envs/')
