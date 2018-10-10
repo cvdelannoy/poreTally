@@ -60,7 +60,7 @@ def main(args):
         quast_output_cmd += ('if [ -e contigs_reports/nucmer_output/{anl}.fplot ]; then '
                              'cp contigs_reports/nucmer_output/{anl}.fplot {wd_analysis_summary}quast/.\n'
                              'cp contigs_reports/nucmer_output/{anl}.rplot {wd_analysis_summary}quast/.\n'
-                             'fi').format(anl=anl, wd_analysis_summary=options_dict['wd_analysis_summary'])
+                             'fi\n').format(anl=anl, wd_analysis_summary=options_dict['wd_analysis_summary'])
     options_dict['quast_output'] = quast_output
     options_dict['quast_output_cmd'] = quast_output_cmd
 
