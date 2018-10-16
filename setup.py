@@ -9,7 +9,7 @@ setup(
     version='0.1',
     packages=['poreTally'],
     install_requires=['six', 'conda', 'gitpython', 'snakemake', 'pyYAML', 'mappy', 'biopython', 'ete3', 'tabulate',
-                      'psutil', 'requests', 'NanoPlot', 'pexpect', 'quast==4.6.3'],
+                      'psutil', 'requests', 'NanoPlot', 'pexpect', 'quast==5.0.0'],
     author='Carlos de Lannoy',
     author_email='carlos.delannoy@wur.nl',
     description='Benchmark nanopore read assembly tools and publish results in a heartbeat',
