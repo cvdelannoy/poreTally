@@ -57,9 +57,12 @@ def main(args):
         quast_output += (',\n\t\t{anl}_fplot=\'{wd_analysis_summary}quast/{anl}.fplot\''
                          ',\n\t\t{anl}_rplot=\'{wd_analysis_summary}quast/{anl}.rplot\'').format(anl=anl,
                                                                                                  wd_analysis_summary=options_dict['wd_analysis_summary'])
-        quast_output_cmd += ('if [ -e contigs_reports/nucmer_output/{anl}.fplot ]; then '
+        quast_output_cmd += ('if [ -e contigs_reports/nucmer_output/{anl}.fplot ]; then '  # for quast <5.0.0
                              'cp contigs_reports/nucmer_output/{anl}.fplot {wd_analysis_summary}quast/.\n'
                              'cp contigs_reports/nucmer_output/{anl}.rplot {wd_analysis_summary}quast/.\n'
+                             'fi\n').format(anl=anl, wd_analysis_summary=options_dict['wd_analysis_summary'])
+        quast_output_cmd += ('if [ -e contigs_reports/all_alignments_{anl}.tsv ]; then '  # for quast =>5.0.0
+                             'cp contigs_reports/all_alignments_{anl}.tsv {wd_analysis_summary}quast/.\n'
                              'fi\n').format(anl=anl, wd_analysis_summary=options_dict['wd_analysis_summary'])
     options_dict['quast_output'] = quast_output
     options_dict['quast_output_cmd'] = quast_output_cmd
