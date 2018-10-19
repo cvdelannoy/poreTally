@@ -5,6 +5,9 @@ poreTally brings all you need to benchmark MinION assembly pipelines
 together. It also generates a report for you in article style, which you
 can publish in a readable format on Github/Gitlab.
 
+See [here](https://github.com/cvdelannoy/poreTally_example) for an example of the report, based on a 1000 reads
+subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09/ultrareads-for-nanopore/).
+
 ## Installing poreTally
 Before installing poreTally, ensure you have python3, miniconda/anaconda and git
 installed on your system.
