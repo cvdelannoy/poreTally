@@ -10,7 +10,13 @@ subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09
 
 ## Installing poreTally
 Before installing poreTally, ensure you have python3, miniconda/anaconda and git
-installed on your system.
+installed on your system. poreTally also requires the `zlib` development library to build `mappy`, as well as more recent versions of `setuptools` and `requests` than you may have by default:
+
+```
+sudo apt install zlib1g-dev
+pip install setuptools --upgrade
+pip install requests --upgrade
+```
 
 Install with pip:
 ```
