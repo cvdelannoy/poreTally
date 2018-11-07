@@ -41,7 +41,7 @@ We aimed to make benchmarking with poreTally as easy to run as possible.
 The entire analysis process (assemble, analyze, publish) is started in
 one command:
 ```
-poreTally run_benchmark
+poreTally run_benchmark \
                 -w path/to/working_directory \
                 -r reference_genome.fasta \
                 -f path/to/fast5_files_dir \
