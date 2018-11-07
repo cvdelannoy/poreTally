@@ -10,7 +10,11 @@ subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09
 
 ## Installing poreTally
 Before installing poreTally, ensure you have python3, miniconda/anaconda and git
-installed on your system. Be aware that you cannot install `conda` through `pip`
+installed on your system. Building and running `poreTally` can be acheived on
+resource-limited systems (2 CPU, 4 GB RAM), though some assemblers 
+may not run successfully (*e.g.* `Canu` stipulates a minimum of 8 GB RAM
+and will forcibly exit).
+Be aware that you cannot install `conda` through `pip`
 to use it as an application.
 poreTally also requires the `zlib` development library to build `mappy`, as well as more recent versions of `setuptools` and `requests` than you may have by default:
 
