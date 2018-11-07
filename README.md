@@ -126,6 +126,7 @@ conda: # details for conda environment that should be loaded, if necessary
 
 See [here](https://github.com/cvdelannoy/poreTally_example) for an example of the report, based on a 1000 reads
 subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09/ultrareads-for-nanopore/).
+Don't forget to add an SSH key to your Github/Gitlab account if you're running `poreTally` from a container!
 
 ## Partial runs
 poreTally is actually divided in three steps, which are run in sequence if you call `run_benchmark`; assembly
