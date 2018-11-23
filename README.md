@@ -10,7 +10,19 @@ subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09
 
 ## Installing poreTally
 Before installing poreTally, ensure you have python3, miniconda/anaconda and git
-installed on your system.
+installed on your system. Building and running `poreTally` can be acheived on
+resource-limited systems (2 CPU, 4 GB RAM), though some assemblers 
+may not run successfully (*e.g.* `Canu` stipulates a minimum of 8 GB RAM
+and will forcibly exit).
+Be aware that you cannot install `conda` through `pip`
+to use it as an application.
+poreTally also requires the `zlib` development library to build `mappy`, as well as more recent versions of `setuptools` and `requests` than you may have by default:
+
+```
+sudo apt install zlib1g-dev
+pip install setuptools --upgrade
+pip install requests --upgrade
+```
 
 Install with pip:
 ```
@@ -35,7 +47,7 @@ We aimed to make benchmarking with poreTally as easy to run as possible.
 The entire analysis process (assemble, analyze, publish) is started in
 one command:
 ```
-poreTally run_benchmark
+poreTally run_benchmark \
                 -w path/to/working_directory \
                 -r reference_genome.fasta \
                 -f path/to/fast5_files_dir \
@@ -114,6 +126,7 @@ conda: # details for conda environment that should be loaded, if necessary
 
 See [here](https://github.com/cvdelannoy/poreTally_example) for an example of the report, based on a 1000 reads
 subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09/ultrareads-for-nanopore/).
+Don't forget to add an SSH key to your Github/Gitlab account if you're running `poreTally` from a container!
 
 ## Partial runs
 poreTally is actually divided in three steps, which are run in sequence if you call `run_benchmark`; assembly
