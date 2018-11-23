@@ -12,7 +12,7 @@ subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09
 Nanopore sequencing is a young field that is in constant motion, thus so should poreTally! Is your favorite assembly
 pipeline not included in poreTally or did you find poreTally's current implementation of an existing pipeline outdated? 
 [Let us know](https://github.com/cvdelannoy/poreTally/issues) or make a pull request with a [yaml file detailing
-your pipeline](####-custom-pipelines) and we would be happy to add it! 
+your pipeline](#custom-pipelines) and we would be happy to add it! 
 
 ## Installation
 Before installing poreTally, ensure you have python3.6, miniconda/anaconda and git
@@ -64,7 +64,7 @@ Below, the running process is broken down in steps.
 
 ### Step 1: prepare your files
 At minimum, poreTally requires your nanopore reads, a reference genome and a 
-[yaml file containing user information](####-user-information-file). The construction of this and any additional files you may want to 
+[yaml file containing user information](#user-information-file). The construction of this and any additional files you may want to 
 prepare is detailed here.
 
 #### User information file
@@ -126,9 +126,9 @@ poreTally from a container, this key must also be added to the container!
 - the names of one of the default pipelines if you just want to run a subset of these (`canu`, `SMARTdenovo`, `Flye`, 
 `minimap2_miniasm`, `minimap2_miniasm_raconX2`). You may also provide the names of yaml files storing your
 own assembly pipelines! The file name without the `.yaml` extension will be used to refer to this pipeline in the report,
-so ensure that these are unique (option `-p`). See [here](####custom-pipelines) on how to construct such a file. 
+so ensure that these are unique (option `-p`). See [here](#custom-pipelines) on how to construct such a file. 
 - If you plan to run poreTally in parallel using SLURM, the header you prepared in 
-[step 1](####-slurm-settings-file-(optional)) (option `-s`).
+[step 1](#slurm-settings-file-optional) (option `-s`).
 
 
 #### An extended running example
