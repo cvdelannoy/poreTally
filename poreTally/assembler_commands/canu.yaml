@@ -11,4 +11,5 @@ conda:
   channels:
     - bioconda
   dependencies:
+    - gnuplot
     - canu
