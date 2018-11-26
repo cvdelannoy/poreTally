@@ -101,8 +101,8 @@ def main(args):
                            'head': github_username+':'+cur_foldername}
             pull_req = ses.post(pull_url, json=pull_params)
             if int(pull_req.status_code) == 201:
-                print('\nResults were sucessfully submitted to the poreTally collective benchmark!\n\n'
-                      'Keep an Eye on github.com/cvdelannoy/poreTally_collective for future analyses.')
+                print('\nResults were successfully submitted to the poreTally collective benchmark!\n\n'
+                      'Keep an Eye on https://github.com/cvdelannoy/poreTallyCommunity for future analyses.')
                 pull_bool = True
                 break
             elif int(pull_req.status_code) == 401:
