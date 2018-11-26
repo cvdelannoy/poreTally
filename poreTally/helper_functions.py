@@ -92,7 +92,7 @@ def dict_to_snakefile(cmds_dict, sf_dict):
                         sf_rule += '\t\t{}\n'.format(l)
         sf_out += sf_rule
         sf_out += '\tshell:\n\t\t\'\'\'\n\t\t'
-        sf_out += 'echo[$(date +%Y-%m-%d_%H:%M:%S)] started pipeline {}\n\t\t'.format(rn)
+        sf_out += 'echo [$(date +%Y-%m-%d_%H:%M:%S)] started pipeline {}\n\t\t'.format(rn)
         for l in cmds_dict[rn]:
             if l:
                 if ' > ' in l:
@@ -100,7 +100,7 @@ def dict_to_snakefile(cmds_dict, sf_dict):
                     # sf_out += 'echo $({} 2>&1 ) >> {{log}} 2>&1\n\t\t'.format(l)
                 else:
                     sf_out += '{} >> {{log}} 2>&1\n\t\t'.format(l)
-        sf_out += 'echo[$(date +%Y-%m-%d_%H:%M:%S)] finished pipeline {}\n\t\t'.format(rn)
+        sf_out += 'echo [$(date +%Y-%m-%d_%H:%M:%S)] finished pipeline {}\n\t\t'.format(rn)
         sf_out += '\'\'\'\n\n'
     return sf_out
 
