@@ -41,7 +41,9 @@ def parse_input_path(location, pattern=None):
                     for f in files:
                         all_files.append(os.path.join(root, f))
         elif os.path.exists(loc):
-            all_files.extend(loc)
+            if pattern:
+                if fnmatch.filter([loc], pattern):
+                    all_files.append(loc)
         else:
             warnings.warn('Given file/dir %s does not exist, skipping' % loc, RuntimeWarning)
     if not len(all_files):
@@ -116,16 +118,24 @@ def set_remote_safely(repo_obj, remote_name, url):
 
 
 # ---- Arg check functions ----
+
+def raise_(ex):
+    """
+    Required to raise exceptions inside a lambda function
+    """
+    raise Exception(ex)
+
+
 def is_fasta(filename):
     """
     Check whether file is existing, and if so, check if in fasta format.
     """
     if not os.path.isfile(filename):
-        raise ValueError('reference file not found')
+        return raise_('reference file not found')
     with open(filename, "r") as handle:
         is_fasta_bool = any(SeqIO.parse(handle, "fasta"))
     if not is_fasta_bool:
-        raise ValueError('reference file does not appear to be in fasta format')
+        return raise_('reference file does not appear to be in fasta format')
     return os.path.realpath(filename)
 
 
@@ -134,16 +144,16 @@ def is_user_info_yaml(filename):
     Check whether file is existing,
     """
     if not os.path.isfile(filename):
-        raise ValueError('{} not found'.format(filename))
+        return raise_('{} not found'.format(filename))
     with open(filename, "r") as handle:
         content = yaml.load(handle)
     if not type(content) is dict:
-        raise ValueError('{} not a yaml'.format(filename))
+        return raise_('{} not a yaml'.format(filename))
     required_info = ['authors', 'species', 'basecaller', 'flowcell', 'kit']
     info_list = list(content)
     for ri in required_info:
         if ri not in info_list:
-            raise ValueError('{} not in info file, but required'.format(ri))
+            return raise_('{} not in info file, but required'.format(ri))
     return os.path.realpath(filename)
 
 
@@ -168,10 +178,12 @@ def is_valid_repo(repo_url):
         rmtree(repo_dir)
     return repo_url
 
+
 def is_valid_fastq_path(path):
     if len(parse_input_path(path, '*.f*q')) == 0:
-        raise ValueError('{} does not seem to contain fastq reads!')
+        return raise_('{} does not seem to contain fastq reads!'.format(path))
     return path
+
 
 def is_valid_slurm_config(filename):
     """
@@ -180,8 +192,8 @@ def is_valid_slurm_config(filename):
     """
     srun_test = os.popen('command -V srun').read()
     if 'srun' not in srun_test:
-        raise ValueError('A SLURM config file was provided, but '
-                         'srun does not seem to be a command on this system.')
+        return raise_('A SLURM config file was provided, but '
+                      'srun does not seem to be a command on this system.')
     try:
         with open(filename, 'r') as f:
             json_tst = json.load(f)
@@ -192,14 +204,14 @@ def is_valid_slurm_config(filename):
         print('{} cannot be found'.format(filename))
         sys.exit(1)
     if '__default__' not in json_tst:
-        raise ValueError('slurm json should contain at least __default__ settings.')
+        return raise_('slurm json should contain at least __default__ settings.')
     check_list = ['partition', 'time', 'mem-per-cpu', 'output', 'error']
     test_bools = [x not in json_tst['__default__'] for x in check_list]
     if any(test_bools):
         missing = [check_list[ci] for ci in range(len(check_list)) if test_bools[ci]]
         missing = ', '.join(missing)
-        raise ValueError('slurm json __default__ settings does not contain {}, '
-                         'but this is required'.format(missing))
+        return raise_('slurm json __default__ settings does not contain {}, '
+                      'but this is required'.format(missing))
     return os.path.realpath(filename)
 
 
