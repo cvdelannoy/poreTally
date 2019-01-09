@@ -39,7 +39,7 @@ def main(args):
         short_reads_fastq = wd + 'short_reads.fastq'
         with open(short_reads_fastq, 'wb') as asr:
             for sr in sr_list:
-                with open(sr, 'wb') as srh:
+                with open(sr, 'rb') as srh:
                     shutil.copyfileobj(srh, asr)
 
     param_dict = dict()
