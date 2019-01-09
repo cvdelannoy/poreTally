@@ -24,6 +24,7 @@ fast5_dir = ('-f', '--fast5-dir', {
 shortreads_dir = ('-a', '--short-reads-dir', {
     'type': lambda x: is_valid_fastq_path(x),
     'required': False,
+    'nargs': '+',
     'help': 'Directory containing short accurate reads in fasta format. Required for some tools '
             '(e.g. for error correction). Config file variable: {SHORT_READS}'
 
