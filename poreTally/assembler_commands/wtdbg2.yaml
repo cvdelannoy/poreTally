@@ -1,0 +1,16 @@
+versions:
+  wtdbg2: 'wtdbg2 --help | grep -Po "(?<=Version: ).+"'
+  wtpoa-cns: 'wtpoa-cns -h | grep -Po "(?<=Version: ).+"'
+description: >
+  Wtdbg2 assembles reads without prior error correction using a fuzzy Bruijn Graph. Overlaps are
+  found using minhashing and are then used to grow a fuzzy Bruijn graph, which allows for mismatches and
+  gaps.
+commands: |
+  wtdbg2 -t {NB_THREADS} -i {{input.fastq}} -fo contig_layout
+  wtpoa-cns -t {NB_THREADS} -i contig_layout.ctg.lay -fo assembly.fasta
+  cp assembly.fasta {{output}}
+conda:
+  channels:
+   - bioconda
+  dependencies:
+   - wtdbg
