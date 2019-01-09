@@ -180,12 +180,13 @@ def is_valid_repo(repo_url):
 
 
 def is_valid_fastq_path(paths):
+    paths_list = paths
     if type(paths) != list:
-        paths = [paths]
-    for path in paths:
-        if len(parse_input_path(path, '*.f*q')) == 0:
-            return path
-    return raise_(f'None of following paths seem to contain fastq reads!: {paths.join(", ")}')
+        paths_list = [paths]
+    for path in paths_list:
+        if len(parse_input_path(path, '*.f*q')) != 0:
+            return paths
+    return raise_(f'None of following paths seem to contain fastq reads!: {", ".join(paths)}')
 
 
 def is_valid_slurm_config(filename):
