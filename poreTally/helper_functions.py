@@ -135,7 +135,7 @@ def is_fasta(filename):
     with open(filename, "r") as handle:
         is_fasta_bool = any(SeqIO.parse(handle, "fasta"))
     if not is_fasta_bool:
-        return raise_('reference file does not appear to be in fasta format')
+        return raise_(f'{filename} file does not appear to be in fasta format')
     return os.path.realpath(filename)
 
 
@@ -172,7 +172,7 @@ def is_valid_repo(repo_url):
         _ = repo_obj.index.commit('remove access test file')
         _ = remote.push('master:origin')
     except GitCommandError as e:
-        print('Error encountered while testing write access to repo {url}:\n{err}'.format(url=repo_url, err=e))
+        print(f'Error encountered while testing write access to repo {repo_url}:\n{e}')
         sys.exit(1)
     finally:
         rmtree(repo_dir)

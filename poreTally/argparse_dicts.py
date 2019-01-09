@@ -18,7 +18,15 @@ working_dir = ('-w', '--working-dir', {
 fast5_dir = ('-f', '--fast5-dir', {
     'type': lambda x: os.path.realpath(x),
     'required': False,
-    'help': 'Directory containing fast5-reads for the provided reads. required for some tools (e.g. Nanopolish).'
+    'help': 'Directory containing fast5-reads for the provided reads. Required for some tools (e.g. Nanopolish).'
+})
+
+shortreads_dir = ('-a', '--short-reads-dir', {
+    'type': lambda x: is_valid_fastq_path(x),
+    'required': False,
+    'help': 'Directory containing short accurate reads in fasta format. Required for some tools '
+            '(e.g. for error correction). Config file variable: {SHORT_READS}'
+
 })
 
 # TODO: implement argcheck
@@ -92,6 +100,7 @@ def get_assemblies_parser():
     parser.add_argument(reads_dir[0], **reads_dir[1])
     parser.add_argument(working_dir[0], working_dir[1], **working_dir[2])
     parser.add_argument(fast5_dir[0], fast5_dir[1], **fast5_dir[2])
+    parser.add_argument(shortreads_dir[0], shortreads_dir[1], **shortreads_dir[2])
     parser.add_argument(pipelines[0], pipelines[1], **pipelines[2])
     parser.add_argument(ref_fasta[0], ref_fasta[1], **ref_fasta[2])
     parser.add_argument(threads_per_job[0], threads_per_job[1], **threads_per_job[2])
@@ -127,6 +136,7 @@ def get_benchmark_parser():
     parser.add_argument(reads_dir[0], **reads_dir[1])
     parser.add_argument(working_dir[0], working_dir[1], **working_dir[2])
     parser.add_argument(fast5_dir[0], fast5_dir[1], **fast5_dir[2])
+    parser.add_argument(shortreads_dir[0], shortreads_dir[1], **shortreads_dir[2])
     parser.add_argument(pipelines[0], pipelines[1], **pipelines[2])
     parser.add_argument(ref_fasta[0], ref_fasta[1], **ref_fasta[2])
     parser.add_argument(threads_per_job[0], threads_per_job[1], **threads_per_job[2])

@@ -33,6 +33,15 @@ def main(args):
             with open(f, 'rb') as fd:
                 shutil.copyfileobj(fd, afq)
 
+    if args.short_reads_dir:
+        # merge short read fastq's
+        sr_list = hp.parse_input_path(args.short_reads_dir, pattern='*.f*q')
+        short_reads_fastq = wd + 'short_reads.fastq'
+        with open(short_reads_fastq, 'wb') as asr:
+            for sr in sr_list:
+                with open(sr, 'wb') as srh:
+                    shutil.copyfileobj(srh, asr)
+
     param_dict = dict()
     param_dict['NB_THREADS'] = args.threads_per_job
     param_dict['REFGENOME_SIZE'] = hp.get_nb_bases(args.ref_fasta, 'fasta')
@@ -42,6 +51,8 @@ def main(args):
     if args.fast5_dir:
         fast5_dir_abs = os.path.abspath(args.fast5_dir) + '/'
         param_dict['FAST5_DIR'] = fast5_dir_abs
+    if args.short_reads_dir:
+        param_dict['SHORT_READS'] = short_reads_fastq
 
     # Construct Snakefile
     # construct unique name for snakefile first
@@ -86,7 +97,11 @@ def main(args):
                 yaml.dump(conda, cf, default_flow_style=False)
             sf_dict[pipeline]['conda'] = [wd_condas + pipeline + '.yaml']
         sf_dict[pipeline]['group'] = ['pipelines']
-        assembly_cmds = pl_dict['commands'].format(**param_dict)
+        try:
+            assembly_cmds = pl_dict['commands'].format(**param_dict)
+        except KeyError as e:
+            raise KeyError(f'Could not fill key word {e} in yaml file {pipeline}. Did you enter all required '
+                           f'resources for this assembler (e.g. fast5 files, short reads...)?')
         cmds = list()
         cmds.extend(hp.parse_version_commands(pl_dict['versions'],
                                               pl_dict['description']))
