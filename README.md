@@ -8,6 +8,15 @@ can publish in a readable format on Github/Gitlab.
 See [here](https://github.com/cvdelannoy/poreTally_example) for an example of the report, based on a 1000 reads
 subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09/ultrareads-for-nanopore/).
 
+#### Included assembly pipelines
+|             	|                          	|
+|-------------	|--------------------------	|
+| **Canu**        	| **Minimap2 + miniasm**       	|
+| **Flye**        	| **Minimap2 + miniasm + racon x 2**    |
+| **SMARTdenovo** 	|   Minimap2 + miniasm + nanopolish 	|
+| wtdbg2      	|             	|
+assembly pipelines displayed **bold** are ran if no pipelines are specified.
+
 #### Important: improving poreTally
 Nanopore sequencing is a young field that is in constant motion, thus so should poreTally! Is your favorite assembly
 pipeline not included in poreTally or did you find poreTally's current implementation of an existing pipeline outdated? 
@@ -117,8 +126,9 @@ To start benchmarking, simply provide your freshly generated `user_info.yaml` fi
 #### Optional arguments
 Optionally, you may provide:
 
-- The number of threads an assembler may use (option `-t`, default is 4).
-- The original fast5-files if this is required by one or more tools in your pipelines (e.g. Nanopolish) (option `-f`).
+- the number of threads an assembler may use (option `-t`, default is 4).
+- the original fast5-files if this is required by one or more tools in your pipelines (e.g. Nanopolish) (option `-f`).
+- short accurate reads if this is required by one or more tools in your pipelines (e.g. Pilon) (option `-a`).
 - a gene annotation file in gff format to include gene finding results by Quast in the report (option `-g`).
 - the SSH address of a Github/Gitlab repository you have an SSH key stored for to publish your report (option `--git`).
 Note that you are required to have an SSH key set up for the account to which the repository belongs. If you are running
