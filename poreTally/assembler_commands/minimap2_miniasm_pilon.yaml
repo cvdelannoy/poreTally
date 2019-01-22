@@ -1,0 +1,29 @@
+versions:
+  minimap2: 'minimap2 -V'
+  miniasm: 'miniasm -V'
+  pilon: 'pilon --version | grep -Po "(?<=version ).+"'
+description: >
+  Minimap2 is a fast all-vs-all mapper of reads that relies on sketches of sequences, composed of
+  minimizers. Miniasm uses the found overlaps to construct an assembly graph. As a consensus step
+  is lacking in this pipeline, post-assembly polishing is often required. Here, Pilon is used
+  to polish the assembly using accurate short reads.
+commands: |
+  # Pilon manual advises to reserve a GB of memory for every mbase of input genome
+  pilon_mem=$(({REFGENOME_SIZE} / 1000000))
+  # I find pilon acts up even with small genomes so I set a minimum of 4GB
+  if [ "${{{{pilon_mem}}}}" -lt "4" ]; then pilon_mem=4; fi
+  minimap2 -x ava-ont -t {NB_THREADS} {{input.fastq}} {{input.fastq}} | gzip -1 > minimap2.paf.gz
+  miniasm -f {{input.fastq}} minimap2.paf.gz > minimap2_miniasm.gfa
+  grep -Po '(?<=S\t)utg.+\s[ACTG]+' minimap2_miniasm.gfa | awk '{{{{print ">"$1"\\n"$2}}}}' | fold > minimap2_miniasm.fasta
+  minimap2 -t {NB_THREADS} -Lax sr minimap2_miniasm.fasta {SHORT_READS} | samtools view -Sbt minimap2_miniasm.fasta - | samtools sort -@ {NB_THREADS} -o sr_mapped.bam -
+  samtools index sr_mapped.bam
+  pilon -Xmx${{{{pilon_mem}}}}g --genome minimap2_miniasm.fasta --bam sr_mapped.bam --output minimap2_miniasm_pilon
+  cp minimap2_miniasm_pilon.fasta {{output}}
+conda:
+  channels:
+    - bioconda
+  dependencies:
+    - minimap2
+    - miniasm
+    - pilon
+    - samtools
