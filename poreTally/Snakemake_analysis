@@ -145,6 +145,7 @@ rule multiqc:
         {threads}
     shell:
         '''
+        set +e
         export LC_ALL=C.UTF-8
         export LANG=C.UTF-8
         cd {wd_analysis_summary}
