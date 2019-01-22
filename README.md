@@ -11,6 +11,7 @@ subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09
 #### Included assembly pipelines
 
 assembly pipelines displayed **bold** are ran if no pipelines are specified.
+
 |             	|                          	|
 |-------------	|--------------------------	|
 | **Canu**        	| **Minimap2 + miniasm**       	|
