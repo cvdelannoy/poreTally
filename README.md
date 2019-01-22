@@ -9,13 +9,15 @@ See [here](https://github.com/cvdelannoy/poreTally_example) for an example of th
 subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09/ultrareads-for-nanopore/).
 
 #### Included assembly pipelines
+
+assembly pipelines displayed **bold** are ran if no pipelines are specified.
 |             	|                          	|
 |-------------	|--------------------------	|
 | **Canu**        	| **Minimap2 + miniasm**       	|
 | **Flye**        	| **Minimap2 + miniasm + racon x 2**    |
 | **SMARTdenovo** 	|   Minimap2 + miniasm + nanopolish 	|
 | wtdbg2      	|       Minimap2 + miniasm + pilon      	|
-assembly pipelines displayed **bold** are ran if no pipelines are specified.
+
 
 #### Important: improving poreTally
 Nanopore sequencing is a young field that is in constant motion, thus so should poreTally! Is your favorite assembly
