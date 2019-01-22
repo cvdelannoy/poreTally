@@ -14,7 +14,7 @@ subset of an <i>E. coli</i> dataset found [here](http://lab.loman.net/2017/03/09
 | **Canu**        	| **Minimap2 + miniasm**       	|
 | **Flye**        	| **Minimap2 + miniasm + racon x 2**    |
 | **SMARTdenovo** 	|   Minimap2 + miniasm + nanopolish 	|
-| wtdbg2      	|             	|
+| wtdbg2      	|       Minimap2 + miniasm + pilon      	|
 assembly pipelines displayed **bold** are ran if no pipelines are specified.
 
 #### Important: improving poreTally
