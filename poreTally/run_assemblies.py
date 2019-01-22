@@ -119,7 +119,8 @@ def main(args):
 
     sm_dict = {'targets': pipelines_list,
                'use_conda': True,
-               'cores': args.threads_per_job}
+               'cores': args.threads_per_job,
+               'keepgoing': True}
 
     # ---- Cluster-related ----
     if args.slurm_config is not None:
