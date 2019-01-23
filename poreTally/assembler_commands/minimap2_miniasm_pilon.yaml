@@ -14,7 +14,7 @@ commands: |
   if [ "${{{{pilon_mem}}}}" -lt "4" ]; then pilon_mem=4; fi
   minimap2 -x ava-ont -t {NB_THREADS} {{input.fastq}} {{input.fastq}} | gzip -1 > minimap2.paf.gz
   miniasm -f {{input.fastq}} minimap2.paf.gz > minimap2_miniasm.gfa
-  grep -Po '(?<=S\t)utg.+\s[ACTG]+' minimap2_miniasm.gfa | awk '{{{{print ">"$1"\\n"$2}}}}' | fold > minimap2_miniasm.fasta
+  awk '/^S/{{{{print ">"$2"\\n"$3}}}}' minimap2_miniasm.gfa | fold > minimap2_miniasm.fasta
   minimap2 -t {NB_THREADS} -Lax sr minimap2_miniasm.fasta {SHORT_READS} | samtools view -Sbt minimap2_miniasm.fasta - | samtools sort -@ {NB_THREADS} -o sr_mapped.bam -
   samtools index sr_mapped.bam
   pilon -Xmx${{{{pilon_mem}}}}g --genome minimap2_miniasm.fasta --bam sr_mapped.bam --output minimap2_miniasm_pilon
