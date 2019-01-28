@@ -5,11 +5,12 @@ description: >
   of error-prone reads. It performs a  pre-assembly read correction, read trimming, assembly
   using the minhash alignment process (MHAP) and ultimately a consensus finding step.
 commands: |
-  canu -d . -p canu_assembly maxThreads={NB_THREADS} useGrid=false genomeSize={REFGENOME_SIZE} -nanopore-raw {{input.fastq}}
+  canu -d . -p canu_assembly maxThreads={NB_THREADS} useGrid=false genomeSize={REFGENOME_SIZE} gnuplot= -nanopore-raw {{input.fastq}}
   mv canu_assembly.contigs.fasta {{output}}
 conda:
   channels:
     - bioconda
+    - conda-forge
   dependencies:
-    - gnuplot
+    - gnuplot=5.0.5
     - canu
