@@ -3,6 +3,7 @@ import datetime
 import yaml
 import snakemake
 import shutil
+import re
 
 import helper_functions as hp
 from Metadata import Metadata
@@ -16,17 +17,24 @@ def main(args):
         raise ValueError('Working directory not found')
     args.working_dir = os.path.realpath(args.working_dir) + '/'
     if os.path.isdir(args.working_dir + 'analysis/'): shutil.rmtree(args.working_dir + 'analysis/')
+    wd_content = os.listdir(args.working_dir)
+    reads_fn = re.search('all_reads\.fast[aq]', ' '.join(wd_content)).group(0)
+    read_type = os.path.splitext(reads_fn)[1]
 
     options_dict = dict()
     options_dict['wd_envs'] = hp.parse_output_path(args.working_dir + 'envs/')
     options_dict['threads'] = args.threads_per_job
     options_dict['ref_fasta'] = os.path.realpath(args.ref_fasta)
-    options_dict['reads_fastq'] = args.working_dir + 'all_reads.fastq'
+    options_dict['reads'] = args.working_dir + reads_fn
     options_dict['wd_analysis'] = hp.parse_output_path(args.working_dir + 'analysis/')
     options_dict['wd_analysis_condas'] = __location__ + '/analysis_conda_files/'
     options_dict['__location__'] = __location__
+    if read_type == 'fastq':
+        options_dict['fastq_dependent_outputs'] = '{wd_analysis_summary}readset_analysis/nanostats.txt,\n'
+    else:
+        options_dict['fastq_dependent_outputs'] = ''
 
-    # --- create output directories
+    # --- create output directories ---
     if os.path.isdir(options_dict['wd_analysis']):
         shutil.rmtree(options_dict['wd_analysis'])
     _ = hp.parse_output_path(options_dict['wd_analysis'] + 'quast')
@@ -45,6 +53,7 @@ def main(args):
         md_yaml = yaml.load(f)
     md = Metadata(md_yaml)
     md.write_publication_info(options_dict['wd_analysis_summary'] + 'publication_info.yaml')
+
     # --- Quast ---
     options_dict['quast_options'] = ''
     if md.is_eukaryote:

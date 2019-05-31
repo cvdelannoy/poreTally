@@ -26,7 +26,7 @@ def main(args):
         repo_obj.index.commit(message='added benchmark results')
         repo_obj.remote('origin').push()
         print('Results summary pushed to {}'.format(args.git))
-    share_results = input('\n\nporeTally has finished!\n'
+    share_results = input(f'\n\nporeTally has finished! Check your report here: {summary_dir+ "REPORT.html"} \n'
                           '\n'
                           'You can help the MinION user community gain insight in the performance of de novo '
                           'assemblers and pick the best one for their dataset, by submitting your results to a shared '

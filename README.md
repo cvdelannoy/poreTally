@@ -69,8 +69,9 @@ poreTally run_benchmark \
                 -g gene_annotation.gff \
                 -i user_info.yaml \
                 --git git@github.com:username/repository_to_store_results.git \
-                path/to/read_fastqs_dir
+                --reads-fastq path/to/read_fastqs_dir [OR] --reads-fasta path/to/read_fastas_dir* 
 ```
+<sub> * The read quality analysis requires fastq reads. </sub>
 
 Below, the running process is broken down in steps.
 
@@ -158,7 +159,7 @@ poreTally run_benchmark \
                 -g gene_annotation.gff \
                 -i user_info.yaml \
                 --git git@github.com:username/repository_to_store_results.git \
-                path/to/read_fastqs_dir
+                --reads-fastq path/to/read_fastqs_dir
 
 ```
 

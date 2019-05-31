@@ -68,7 +68,7 @@ rule nanoplot:
     threads:
         {threads}
     input:
-        reads='{reads_fastq}'
+        reads='{reads}'
     shell:
         '''
         echo "Nanoplot: "$(NanoPlot --version | grep -Po "(?<=NanoPlot ).+")  >> {wd_analysis_summary}/analysis_tool_versions.yaml
@@ -83,7 +83,7 @@ rule readset_quality:
     threads:
         {threads}
     input:
-        reads='{reads_fastq}',
+        reads='{reads}',
         ref_fasta='{ref_fasta}'
     run:
         os.system('echo "Mappy: "$(conda list | grep -oP "(?<=mappy).+" | grep -oP "[0-9]+(\.[0-9]+)+") >> {wd_analysis_summary}/analysis_tool_versions.yaml')
@@ -131,10 +131,9 @@ rule multiqc:
         '{wd_analysis_condas}multiqc.yaml'
     input:
         # expand('{wd_analysis_summary}quast/{{assembler}}.{{ext}}', assembler=ASSEMBLERS, ext=QUAST_EXTS),
-        expand('{wd_analysis_summary}jellyfish/{{assembler}}.count', assembler=ASSEMBLERS),
+        {fastq_dependent_outputs}expand('{wd_analysis_summary}jellyfish/{{assembler}}.count', assembler=ASSEMBLERS),
         '{wd_analysis_summary}jellyfish/reference.count',
         '{wd_analysis_summary}quast/report.tsv',
-        '{wd_analysis_summary}readset_analysis/nanostats.txt',
         '{wd_analysis_summary}readset_analysis/alignment_stats.yaml',
         expand('{wd_analysis_summary}log_files/{{assembler}}.log', assembler=ASSEMBLERS),
         expand('{wd_analysis_summary}cpu_files/{{assembler}}.bm', assembler=ASSEMBLERS),

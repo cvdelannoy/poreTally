@@ -188,6 +188,15 @@ def is_valid_fastq_path(paths):
             return paths
     return raise_(f'None of following paths seem to contain fastq reads!: {", ".join(paths)}')
 
+def is_valid_fasta_path(paths):
+    paths_list = paths
+    if type(paths) != list:
+        paths_list = [paths]
+    for path in paths_list:
+        if len(parse_input_path(path, '*.f*a')) != 0:
+            return paths
+    return raise_(f'None of following paths seem to contain fasta reads!: {", ".join(paths)}')
+
 
 def is_valid_slurm_config(filename):
     """

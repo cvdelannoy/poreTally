@@ -11,7 +11,12 @@ import datetime
 
 def main(args):
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-    fastq_list = hp.parse_input_path(args.reads_dir, pattern='*.f*q')
+    if args.reads_fastq:
+        reads_list = hp.parse_input_path(args.reads_fastq, pattern='*.f*q')
+        read_type = 'fastq'
+    else:
+        reads_list = hp.parse_input_path(args.reads_fasta, pattern='*.f*a')
+        read_type = 'fasta'
     wd = args.working_dir
 
     # Make necessary subdirs
@@ -27,9 +32,9 @@ def main(args):
         os.remove(wd+'Snakefile')
 
     # merge fastq's
-    all_reads_fastq = wd + 'all_reads.fastq'
-    with open(all_reads_fastq, 'wb') as afq:
-        for f in fastq_list:
+    all_reads = f'{wd}all_reads.{read_type}'
+    with open(all_reads, 'wb') as afq:
+        for f in reads_list:
             with open(f, 'rb') as fd:
                 shutil.copyfileobj(fd, afq)
 
@@ -45,7 +50,7 @@ def main(args):
     param_dict = dict()
     param_dict['NB_THREADS'] = args.threads_per_job
     param_dict['REFGENOME_SIZE'] = hp.get_nb_bases(args.ref_fasta, 'fasta')
-    param_dict['SEQUENCED_SIZE'] = hp.get_nb_bases(all_reads_fastq, 'fastq')
+    param_dict['SEQUENCED_SIZE'] = hp.get_nb_bases(all_reads, read_type)
     param_dict['COVERAGE'] = param_dict['SEQUENCED_SIZE'] / param_dict['REFGENOME_SIZE']
     param_dict['WD'] = wd
     if args.fast5_dir:
@@ -83,7 +88,7 @@ def main(args):
         wd_cur = hp.parse_output_path(wd_cur_path)
 
         sf_dict[pipeline] = {
-            'input': {'fastq': wd+'all_reads.fastq'},
+            'input': {'fastq': f'{wd}all_reads.{read_type}'},
             'threads': [args.threads_per_job],
             'output': [wd_assemblies + pipeline + '.fasta'],
             'log': [wd_logs + pipeline + '.log'],

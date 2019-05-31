@@ -1,7 +1,8 @@
 import argparse
 import os
 
-from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo, is_valid_slurm_config, parse_output_path, is_valid_fastq_path
+from helper_functions import is_fasta, is_user_info_yaml, is_valid_repo, is_valid_slurm_config, parse_output_path, \
+    is_valid_fastq_path, is_valid_fasta_path
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 included_pipelines = os.listdir(__location__+ '/assembler_commands/')
@@ -86,19 +87,33 @@ git = ('--git', {
                'If provided, poreTally pushes the results of your benchmark run to this repo.'
 })
 
-# Positional
-# TODO: implement argcheck
-reads_dir = ('reads_dir', {
+reads_fastq = ('--reads-fastq', {
     'type': lambda x: is_valid_fastq_path(x),
     'nargs': '+',
     'help': 'directory or list of MinION reads in fastq format'
 })
 
+reads_fasta = ('--reads-fasta', {
+    'type': lambda x: is_valid_fasta_path(x),
+    'nargs': '+',
+    'help': 'directory or list of MinION reads in fastq format'
+})
+
+# # Positional
+# # TODO: implement argcheck
+# reads_dir = ('reads_dir', {
+#     'type': lambda x: is_valid_reads_path(x),
+#     'nargs': '+',
+#     'help': 'directory or list of MinION reads in fastq/fasta format'
+# })
+
 
 def get_assemblies_parser():
     parser = argparse.ArgumentParser(description=' Run a set of MinION assemblers, as defined by the scripts in '
                                                  'the "assembler_commands" folder.')
-    parser.add_argument(reads_dir[0], **reads_dir[1])
+    reads_parser = parser.add_mutually_exclusive_group(required=True)
+    reads_parser.add_argument(reads_fastq[0], **reads_fastq[1])
+    reads_parser.add_argument(reads_fasta[0], **reads_fasta[1])
     parser.add_argument(working_dir[0], working_dir[1], **working_dir[2])
     parser.add_argument(fast5_dir[0], fast5_dir[1], **fast5_dir[2])
     parser.add_argument(shortreads_dir[0], shortreads_dir[1], **shortreads_dir[2])
@@ -134,7 +149,9 @@ def get_benchmark_parser():
     parser = argparse.ArgumentParser(description='Run all steps of the benchmarking procedure: assemble using several'
                                                  'pipelines, analyze the assemblies and (optionally) publish in an'
                                                  'online repository.')
-    parser.add_argument(reads_dir[0], **reads_dir[1])
+    reads_parser = parser.add_mutually_exclusive_group(required=True)
+    reads_parser.add_argument(reads_fastq[0], **reads_fastq[1])
+    reads_parser.add_argument(reads_fasta[0], **reads_fasta[1])
     parser.add_argument(working_dir[0], working_dir[1], **working_dir[2])
     parser.add_argument(fast5_dir[0], fast5_dir[1], **fast5_dir[2])
     parser.add_argument(shortreads_dir[0], shortreads_dir[1], **shortreads_dir[2])
