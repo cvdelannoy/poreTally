@@ -50,7 +50,7 @@ def main(args):
     assemblies_names_list = [os.path.splitext(os.path.basename(af))[0] for af in assemblies_list]
     options_dict['assemblies_string'] = ' '.join(assemblies_names_list)
     with open(args.user_info, 'r') as f:
-        md_yaml = yaml.load(f)
+        md_yaml = yaml.full_load(f)
     md = Metadata(md_yaml)
     md.write_publication_info(options_dict['wd_analysis_summary'] + 'publication_info.yaml')
 

@@ -77,7 +77,7 @@ def main(args):
             yaml_fn = __location__ + '/assembler_commands/' + pipeline + '.yaml'
         if os.path.isfile(yaml_fn):
             with open(yaml_fn, 'r') as plf:
-                pl_dict = yaml.load(plf)
+                pl_dict = yaml.full_load(plf)
         else:
             warnings.warn('Could not find yaml file for {pl}, skipping'.format(pl=yaml_fn))
             continue

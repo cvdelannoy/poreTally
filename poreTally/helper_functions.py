@@ -146,7 +146,7 @@ def is_user_info_yaml(filename):
     if not os.path.isfile(filename):
         return raise_('{} not found'.format(filename))
     with open(filename, "r") as handle:
-        content = yaml.load(handle)
+        content = yaml.full_load(handle)
     if not type(content) is dict:
         return raise_('{} not a yaml'.format(filename))
     required_info = ['authors', 'species', 'basecaller', 'flowcell', 'kit']
