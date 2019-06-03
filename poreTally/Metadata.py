@@ -85,7 +85,7 @@ class Metadata(object):
     @flowcell.setter
     def flowcell(self, flowcell):
         with open(__location__+'/allowed_publication_info_names.yaml', 'r') as f:
-            allowed_names = yaml.load(f)
+            allowed_names = yaml.full_load(f)
         if flowcell not in allowed_names['flowcell']:
             flowcell_list = ', '.join(allowed_names['flowcell'])
             raise ValueError('{fc} is not a valid flowcell name, '
@@ -96,7 +96,7 @@ class Metadata(object):
     @kit.setter
     def kit(self, kit):
         with open(__location__+'/allowed_publication_info_names.yaml', 'r') as f:
-            allowed_names = yaml.load(f)
+            allowed_names = yaml.full_load(f)
         if kit not in allowed_names['kit']:
             kit_list = ', '.join(allowed_names['kit'])
             raise ValueError('{kt} is not a valid flowcell name, '
