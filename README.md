@@ -52,8 +52,7 @@ well in a virtualenv__.
 
 Alternatively, use the Docker image:
 ```
-docker build https://github.com/cvdelannoy/poreTally.git -t poretally
-docker run -t -v mount_this:to_that poretally run_benchmark -h
+docker run -t -v mount_this:to_that cvdelannoy/poretally run_benchmark -h
 ```
 
 ## Running
