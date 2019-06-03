@@ -7,7 +7,7 @@ description: >
   gaps.
 commands: |
   wtdbg2 -t {NB_THREADS} -i {{input.fastq}} -fo contig_layout
-  wtpoa-cns -t {NB_THREADS} -i contig_layout.ctg.lay -fo assembly.fasta
+  wtpoa-cns -t {NB_THREADS} -i contig_layout.ctg.lay.gz -fo assembly.fasta
   cp assembly.fasta {{output}}
 conda:
   channels:
