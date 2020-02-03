@@ -1,0 +1,43 @@
+versions:
+  canu: 'canu --version 2>&1 | grep -Po "(?<=Canu ).+"'
+  minimap2: 'minimap2 -V'
+  pilon: 'pilon --version | grep -Po "(?<=version ).+"'
+description: >
+  Canu is a complete OLC assembly pipeline that was shown to work well for the assembly
+  of error-prone reads. It performs a  pre-assembly read correction, read trimming, assembly
+  using the minhash alignment process (MHAP) and ultimately a consensus finding step. This 
+  pipeline also contains short read polishing using Pilon.
+commands: |
+  canu -d . -p canu_assembly maxThreads={NB_THREADS} useGrid=false genomeSize={REFGENOME_SIZE} gnuplot= -nanopore-raw {{input.fastq}}
+  mv canu_assembly.contigs.fasta canu.fasta
+
+  # Pilon manual advises to reserve a GB of memory for every mbase of input genome
+  pilon_mem=$(({REFGENOME_SIZE} / 1000000))
+  # I find pilon acts up even with small genomes so I set a minimum of 4GB
+  if [ "${{{{pilon_mem}}}}" -lt "4" ]; then pilon_mem=4; fi
+
+  # pilon round 1
+  minimap2 -t {NB_THREADS} -Lax sr canu.fasta {SHORT_READS} | samtools view -Sbt canu.fasta - | samtools sort -@ {NB_THREADS} -o sr_mapped1.bam -
+  samtools index sr_mapped1.bam
+  pilon -Xmx${{{{pilon_mem}}}}g --genome canu.fasta --bam sr_mapped1.bam --output canu_pilon1
+
+  # pilon round 2
+  minimap2 -t {NB_THREADS} -Lax sr canu_pilon1.fasta {SHORT_READS} | samtools view -Sbt canu_pilon1.fasta - | samtools sort -@ {NB_THREADS} -o sr_mapped2.bam -
+  samtools index sr_mapped2.bam
+  pilon -Xmx${{{{pilon_mem}}}}g --genome canu_pilon1.fasta --bam sr_mapped2.bam --output canu_pilon2
+
+  # pilon round 3
+  minimap2 -t {NB_THREADS} -Lax sr canu_pilon2.fasta {SHORT_READS} | samtools view -Sbt canu_pilon2.fasta - | samtools sort -@ {NB_THREADS} -o sr_mapped3.bam -
+  samtools index sr_mapped3.bam
+  pilon -Xmx${{{{pilon_mem}}}}g --genome canu_pilon2.fasta --bam sr_mapped3.bam --output canu_pilon3
+  cp canu_pilon3.fasta {{output}}
+
+conda:
+  channels:
+    - bioconda
+    - conda-forge
+  dependencies:
+    - canu
+    - minimap2
+    - pilon
+    - samtools

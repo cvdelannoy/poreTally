@@ -6,7 +6,7 @@ description: >
   these paths.
 commands: |
   flye --nano-raw {{input.fastq}} --genome-size {REFGENOME_SIZE} --out-dir . --threads {NB_THREADS}
-  mv scaffolds.fasta {{output}}
+  cp assenbly.fasta {{output}}
 conda:
   channels:
     - bioconda

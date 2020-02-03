@@ -1,0 +1,41 @@
+versions:
+  HASLR: 'haslr.py --version'
+  minimap2: 'minimap2 -V'
+  pilon: 'pilon --version | grep -Po "(?<=version ).+"'
+description: >
+  HASLR is a hybrid assembler which first constructs contigs from short reads using Minia and then 
+  fills the gaps in between using a consensus of long reads. The resulting assembly was then polished
+  using short reads, with minimap2+Pilon three times.
+commands: |
+  haslr.py -t {NB_THREADS} -o haslr_output -g {REFGENOME_SIZE} -l {{input.fastq}} -x nanopore -s {SHORT_READS}
+  grep -Po '(?<=S\t).+\s[ACTG]+' haslr_output/asm_contigs_k49_a3_lr25x_b500_s3_sim0.85/backbone.06.smallbubble.gfa | awk '{{{{print ">"$1"\\n"$2}}}}' | fold > haslr.fasta
+  
+  # Pilon manual advises to reserve a GB of memory for every mbase of input genome
+  pilon_mem=$(({REFGENOME_SIZE} / 1000000))
+  # I find pilon acts up even with small genomes so I set a minimum of 4GB
+  if [ "${{{{pilon_mem}}}}" -lt "4" ]; then pilon_mem=4; fi
+
+  # pilon round 1
+  minimap2 -t {NB_THREADS} -Lax sr haslr.fasta {SHORT_READS} | samtools view -Sbt haslr.fasta - | samtools sort -@ {NB_THREADS} -o sr_mapped1.bam -
+  samtools index sr_mapped1.bam
+  pilon -Xmx${{{{pilon_mem}}}}g --genome haslr.fasta --bam sr_mapped1.bam --output haslr_pilon1
+  
+  # pilon round 2
+  minimap2 -t {NB_THREADS} -Lax sr haslr_pilon1.fasta {SHORT_READS} | samtools view -Sbt haslr_pilon1.fasta - | samtools sort -@ {NB_THREADS} -o sr_mapped2.bam -
+  samtools index sr_mapped2.bam
+  pilon -Xmx${{{{pilon_mem}}}}g --genome haslr_pilon1.fasta --bam sr_mapped2.bam --output haslr_pilon2
+
+  # pilon round 3
+  minimap2 -t {NB_THREADS} -Lax sr haslr_pilon2.fasta {SHORT_READS} | samtools view -Sbt haslr_pilon2.fasta - | samtools sort -@ {NB_THREADS} -o sr_mapped3.bam -
+  samtools index sr_mapped3.bam
+  pilon -Xmx${{{{pilon_mem}}}}g --genome haslr_pilon2.fasta --bam sr_mapped3.bam --output haslr_pilon3
+  cp haslr_pilon3.fasta {{output}}
+
+conda:
+  channels:
+    - bioconda
+  dependencies:
+    - haslr
+    - minimap2
+    - pilon
+    - samtools

@@ -1,0 +1,14 @@
+versions:
+  SPAdes: 'spades.py --version | grep -Po "(?<=SPAdes ).+"'
+description: >
+  SPAdes performs hybrid assembly by constructing an assembly graph from short reads, mapping long
+  reads to the assembly graph, using the long read consensus to close the gaps. Lastly it resolves
+  repeats using the long reads paths with the deision rule of exSPAnder.
+commands: |
+  spades.py -o spades_output --12 {SHORT_READS} --nanopore {{input.fastq}} -t {NB_THREADS} -m 120
+  awk '/^S/{{{{print ">"$2"\\n"$3}}}}'  spades_output/assembly_graph_with_scaffolds.gfa | fold > {{output}}
+conda:
+  channels:
+    - bioconda
+  dependencies:
+    - spades

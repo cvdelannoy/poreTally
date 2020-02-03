@@ -1,0 +1,24 @@
+versions:
+  HASLR: 'haslr.py --version'
+  minimap2: 'minimap2 -V'
+  racon: 'racon --version'
+description: >
+  HASLR is a hybrid assembler which first constructs contigs from short reads using Minia and then 
+  fills the gaps in between using a consensus of long reads. The resulting assembly was then polished
+  using long reads, with minimap2+Racon three times.
+commands: |
+  haslr.py -t {NB_THREADS} -o haslr_output -g {REFGENOME_SIZE} -l {{input.fastq}} -x nanopore -s {SHORT_READS}
+  grep -Po '(?<=S\t).+\s[ACTG]+' haslr_output/asm_contigs_k49_a3_lr25x_b500_s3_sim0.85/backbone.06.smallbubble.gfa | awk '{{{{print ">"$1"\\n"$2}}}}' | fold > haslr.fasta
+  minimap2 -x ava-ont -t {NB_THREADS} haslr.fasta {{input.fastq}} > haslr_readsToContigs1.paf
+  racon -t {NB_THREADS} {{input.fastq}} haslr_readsToContigs1.paf haslr.fasta > haslr_raconX1.fasta
+  minimap2 -x ava-ont -t {NB_THREADS} haslr_raconX1.fasta {{input.fastq}} > haslr_readsToContigs2.paf
+  racon -t {NB_THREADS} {{input.fastq}} haslr_readsToContigs2.paf haslr_raconX1.fasta > haslr_raconX2.fasta 
+  minimap2 -x ava-ont -t {NB_THREADS} haslr_raconX2.fasta {{input.fastq}} > haslr_readsToContigs3.paf
+  racon -t {NB_THREADS} {{input.fastq}} haslr_readsToContigs3.paf haslr_raconX2.fasta > {{output}}
+conda:
+  channels:
+    - bioconda
+  dependencies:
+    - haslr
+    - minimap2
+    - racon
