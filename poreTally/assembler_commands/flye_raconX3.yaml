@@ -1,0 +1,25 @@
+versions:
+  flye: 'flye --version 2>&1'
+  minimap2: 'minimap2 -V'
+  racon: 'racon --version'
+description: >
+  Flye uses A-Bruijn graphs to assemble long error-prone reads. To do so, it follows
+  arbitrary paths through the assembly graph and constructs new assembly graphs from
+  these paths. This pipeline also contains short read polishing using Pilon.
+commands: |
+  flye --nano-raw {{input.fastq}} --genome-size {REFGENOME_SIZE} --out-dir . --threads {NB_THREADS}
+
+  minimap2 -x ava-ont -t {NB_THREADS} assembly.fasta {{input.fastq}} > readsToContigs1.paf
+  racon -t {NB_THREADS} {{input.fastq}} readsToContigs1.paf assembly.fasta > raconX1.fasta
+  minimap2 -x ava-ont -t {NB_THREADS} raconX1.fasta {{input.fastq}} > readsToContigs2.paf
+  racon -t {NB_THREADS} {{input.fastq}} readsToContigs2.paf raconX1.fasta > raconX2.fasta
+  minimap2 -x ava-ont -t {NB_THREADS} raconX2.fasta {{input.fastq}} > readsToContigs3.paf
+  racon -t {NB_THREADS} {{input.fastq}} readsToContigs3.paf raconX2.fasta > {{output}}
+
+conda:
+  channels:
+    - bioconda
+  dependencies:
+    - flye
+    - minimap2
+    - racon
